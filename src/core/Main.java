@@ -28,7 +28,7 @@ import script.action.*;
 
 public class Main {
 	
-	private static String version = "0.1.0";
+	private static String version = "0.1.1";
 	public static ScriptController defaultController = new ScriptController();
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
