@@ -2,6 +2,8 @@ package core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import capture.MouseCapture;
 
@@ -14,6 +16,7 @@ import clients.SeleniumClient;
 import clients.SeleniumFirefox;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.ArgumentChoice;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -32,8 +35,10 @@ public class Main {
 		
 		ArgumentParser parser = ArgumentParsers.newFor("eloki2").build()
 				.description("A tool to generate, record and replay browser sessions");
-		parser.addArgument("--client").choices("SeleniumChrome", "SeleniumFirefox").dest("client")
-				.help("sets the browser client to use");
+		parser.addArgument("--client")
+			.choices(new IgnoreChoice("SeleniumChrome","SeleniumFirefox"))
+			.dest("client")
+			.help("sets the browser client to use");
 		parser.addArgument("--driver").dest("driver").help("Sets the driver used by selenium");
 		parser.version(version);
 		parser.addArgument("--version").action(Arguments.version());
@@ -98,7 +103,7 @@ public class Main {
 			//resolve the client
 			String clientName = res.getString("client");
 			Client client = null;
-			if(clientName.equals("SeleniumChrome")) {
+			if(clientName.equalsIgnoreCase("SeleniumChrome")) {
 				if(res.getString("driver")==null) {
 					System.err.println("The ChromeDriver must be set using the --driver argument");
 					System.exit(1);
@@ -107,7 +112,7 @@ public class Main {
 				client = new SeleniumChrome();
 
 			}
-			else if(clientName.equals("SeleniumFirefox")) {
+			else if(clientName.equalsIgnoreCase("SeleniumFirefox")) {
 				System.setProperty("webdriver.gecko.driver", res.getString("driver"));
 				client = new SeleniumFirefox();
 			}
@@ -169,5 +174,27 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static class IgnoreChoice implements ArgumentChoice {
+		private String options[];
+		private IgnoreChoice(String... options) {
+			this.options = options;
+		}
+		@Override
+		public boolean contains(Object val) {
+			for(String s:options) {
+				if(s.equalsIgnoreCase(val.toString())) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public String textualFormat() {
+			return Arrays.stream(options).collect(Collectors.joining(","));
+		}
+		
 	}
 }
