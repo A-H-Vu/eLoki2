@@ -24,6 +24,8 @@ import script.ScriptController;
 import script.action.*;
 
 public class Main {
+	
+	private static String version = "0.1.0";
 	public static ScriptController defaultController = new ScriptController();
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -33,6 +35,8 @@ public class Main {
 		parser.addArgument("--client").choices("SeleniumChrome", "SeleniumFirefox").dest("client")
 				.help("sets the browser client to use");
 		parser.addArgument("--driver").dest("driver").help("Sets the driver used by selenium");
+		parser.version(version);
+		parser.addArgument("--version").action(Arguments.version());
 		
 		Subparsers subparsers = parser.addSubparsers().help("sub-command help");
 		
