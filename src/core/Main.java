@@ -2,8 +2,6 @@ package core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import capture.MouseCapture;
 

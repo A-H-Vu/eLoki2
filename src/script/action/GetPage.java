@@ -31,7 +31,9 @@ public class GetPage extends Action {
 	public Action execute(Client client) {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
-			sClient.getWebDriver().get(pageURL);
+			if(!sClient.getWebDriver().getCurrentUrl().equals(pageURL)){
+				sClient.getWebDriver().get(pageURL);
+			}
 		}
 		return super.next;
 	}

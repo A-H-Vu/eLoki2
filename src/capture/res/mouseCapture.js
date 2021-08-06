@@ -146,7 +146,10 @@ function init(ifHeight = 1200, ifWeight = 1920) {
             clearInterval(theInterval);
             printButton.disabled = false;
             downloadButton.disabled = false;
-
+            ticks.push({
+                content: `--------`,
+                t: new Date()
+            })
             // ticks.push({
             //     content: `stopped`,
             //     t: new Date()
@@ -157,13 +160,14 @@ function init(ifHeight = 1200, ifWeight = 1920) {
             //     content: `started`,
             //     t: new Date()
             // });
+
             // console.log(ticks.length)
-            if(ticks.length===0){
+            // if(ticks.length===0){
                 ticks.push({
                     content: `getPage `+ifrm.contentWindow.location,
                     t: new Date()
                 })
-            }
+            // }
             d = new Date()
             theInterval = setInterval(() => {
                 //For some reason this appears to start running prior to toggle capturing being pressed
@@ -242,7 +246,6 @@ function init(ifHeight = 1200, ifWeight = 1920) {
                 toggleCapturing(ifrmDoc);
             }
         }
-        console.log("attached listeners");
         
         
         ifrmDoc.body.focus()
@@ -262,7 +265,7 @@ function get_ticks() {
         return 0;
     });
     for (let tick of ticks)
-        result += tick.content + '\n';
+        result += '@' + tick.t.getTime() + ' ' + tick.content + '\n';
     // result += tick.content + ' @ ' + tick.t.getMinutes() + ":" + tick.t.getSeconds() + ":" + tick.t.getMilliseconds() + '\n';
     return result;
 }

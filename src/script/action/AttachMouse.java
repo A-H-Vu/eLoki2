@@ -1,9 +1,5 @@
 package script.action;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import clients.Client;
 import clients.SeleniumClient;
 
