@@ -54,11 +54,10 @@ public class ScriptController {
 			System.err.println("Error parsing format for "+line+", skipping");
 		}
 		
-		
 		String action = parseMatcher.group(2).split(" ")[0];
 		if (actionMap.containsKey(action)) {
 			try {
-				Action n = actionMap.get(action).getConstructor(String.class).newInstance(line);
+				Action n = actionMap.get(action).getConstructor(String.class).newInstance(parseMatcher.group(2));
 				if (initial == null) {
 					initial = n;
 					current = n;
@@ -77,7 +76,7 @@ public class ScriptController {
 			System.err.println("Unrecognized Action keyword " + action + ", skipping");
 		}
 		if(parseMatcher.group(1)!=null) {
-			current.setTickVal(Long.parseLong(parseMatcher.group(1)));
+			current.setTickVal(Long.parseLong(parseMatcher.group(1).substring(1)));
 		}
 	}
 	

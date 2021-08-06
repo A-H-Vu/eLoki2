@@ -130,7 +130,7 @@ function init(ifHeight = 1200, ifWeight = 1920) {
         console.log(ticks);
         doc.onmousemove = event => {
             mousePos = {
-                content: `${event.x},${event.y},${window.pageXOffset},${window.pageYOffset}`,
+                content: `mouseMoveScroll ${event.x} ${event.y} ${window.pageXOffset} ${window.pageYOffset}`,
                 t: new Date()
             };
         };
@@ -228,7 +228,7 @@ function get_ticks() {
         return 0;
     });
     for (let tick of ticks)
-        result += tick.content + '\n';
+        result += '@' + tick.t.getTime() + ' '+ tick.content + '\n';
     // result += tick.content + ' @ ' + tick.t.getMinutes() + ":" + tick.t.getSeconds() + ":" + tick.t.getMilliseconds() + '\n';
     return result;
 }
