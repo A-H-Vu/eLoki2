@@ -64,7 +64,7 @@ public class SeleniumScraper {
 		this.timeout = timeout;
 	}
 	
-	public void scrapeSite(String url, int depth) throws IOException {
+	public void scrapeSite(String url) throws IOException {
 		BufferedWriter bWriter = Files.newBufferedWriter(dest.toPath(), 
 				StandardOpenOption.CREATE, 
 				StandardOpenOption.TRUNCATE_EXISTING, 
@@ -89,7 +89,6 @@ public class SeleniumScraper {
 		}
 		seen = new TreeSet<String>();
 		visited = new TreeSet<String>();
-		visited.add(baseUrl);
 		urls.offer(new QueueURL(baseUrl,0));
 		
 		baseUrl = validateURL(baseUrl);
@@ -117,7 +116,7 @@ public class SeleniumScraper {
 		}
 		
 		for(String ul : visited){
-			out.write(ul.substring(baseUrl.length())+"\n");
+			out.write(ul+"\n");
 		}
 		out.close();
 		client.close();

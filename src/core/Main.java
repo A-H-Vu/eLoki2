@@ -54,6 +54,7 @@ public class Main {
 		scraper.addArgument("--max-depth")
 			.setDefault(10)
 			.metavar("DEPTH")
+			.type(Integer.class)
 			.help("Maximum depth from first url to scrape, 0 means scrape only the given url");
 //		scraper.addArgument("--user-agent")
 //			.metavar("UA")
@@ -135,7 +136,8 @@ public class Main {
 					if(res.get("user-agent")!=null) {
 						
 					}
-					selScraper.scrapeSite(res.getString("url"), res.getInt("max_depth"));
+					selScraper.setMaxDepth(res.getInt("max_depth"));
+					selScraper.scrapeSite(res.getString("url"));
 				}
 
 			}

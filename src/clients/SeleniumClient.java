@@ -45,12 +45,12 @@ public abstract class SeleniumClient extends Client implements Closeable {
 	}
 
 	//This may be the cause of countless bugs with how java's GC works
-	public final void finalize() {
-		try {
-			//System.out.println("SeleniumClient finalized, GCed");
-			close();
-		} catch (IOException e) {
-		}
-	}
+//	public final void finalize() {
+//		try {
+//			//System.out.println("SeleniumClient finalized, GCed");
+//			close();
+//		} catch (IOException e) {
+//		}
+//	}
 
 }
