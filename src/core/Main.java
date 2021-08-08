@@ -3,6 +3,7 @@ package core;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import capture.MouseCapture;
@@ -49,10 +50,14 @@ public class Main {
 		Subparser runscript = subparsers.addParser("run")
 				.help("Run a script")
 				.setDefault("runscript", true);
-		runscript.addArgument("--script")
-			.required(true)
-			.dest("script")
+		runscript.addArgument("script")
+			.action(Arguments.append())
+			.nargs("+")
 			.help("Script to run");
+//		runscript.addArgument("--script")
+//			.required(true)
+//			.dest("script")
+//			.help("Script to run");
 		
 		
 		Subparser scraper = subparsers.addParser("scrape")
@@ -101,6 +106,7 @@ public class Main {
 		
 		try {
 			Namespace res = parser.parseArgs(args);
+			System.out.println(res);
 			//resolve the client
 			String clientName = res.getString("client");
 			Client client = null;
@@ -123,12 +129,15 @@ public class Main {
 					System.err.println("The selenium client and driver must be set using --client and --driver");
 					System.exit(1);
 				}
-				try {
-					Action initial = defaultController.parseScript(Files.readAllLines(new File(res.getString("script")).toPath()));
-					defaultController.runScript(initial, client);
-				} catch (IOException e) {
-					System.err.println("Error reading script "+res.getString("script"));
-					System.err.println(e.getMessage());
+				List<String> scripts = (List<String>) res.getList("script").stream().flatMap(s -> {return ((List)s).stream();}).map(s -> s.toString()).collect(Collectors.toList());
+				for(Object s:scripts) {
+					try {
+						Action initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
+						defaultController.runScript(initial, client);
+					} catch (IOException e) {
+						System.err.println("Error reading script "+res.getString("script"));
+						System.err.println(e.getMessage());
+					}
 				}
 				if(client instanceof Closeable) {
 					((Closeable)client).close();
