@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import clients.Client;
 import script.action.Action;
+import script.action.ActionTick;
 
 public class ScriptController {
 
@@ -81,10 +82,43 @@ public class ScriptController {
 	}
 	
 	public void runScript(Action script, Client client) {
+		long epoch = System.currentTimeMillis();
 		Action current = script;
+		long epochRel = script.getTick().getValue();
 		while(current != null) {
 			System.out.println(current.getRaw());
+			Action prev = current;
 			current = current.execute(client);
+			if(prev.getTick().getResponse()==ActionTick.Response.ResetEpochToEnd) {
+				epoch = System.currentTimeMillis();
+				epochRel = prev.getTick().getValue();
+			}
+			//end of script exit
+			if(current == null)break;
+			//Calculate the necessary delay to the next action allow ~ 2ms for webdriver communication etc.
+			ActionTick.Response type = current.getTick().getResponse();
+			long delay = 0;
+			if(type == ActionTick.Response.Skippable||type == ActionTick.Response.UseTick) {
+				delay = (current.getTick().getValue()-epochRel)-(System.currentTimeMillis()-epoch);
+			}
+			//Skip if delay is negative/lagging significantly
+			if(delay<0&&type == ActionTick.Response.Skippable) {
+				//TODO implement skipping logic
+			}
+			
+			if(delay > 2) {
+				try {
+					Thread.sleep(delay);
+				} catch (InterruptedException e) {
+					//presumably interrupted to stop script
+					break;
+				}
+			}
+			if(type == ActionTick.Response.ResetEpoch) {
+				epoch = System.currentTimeMillis();
+				epochRel = current.getTick().getValue();
+			}
+				
 		}
 	}
 

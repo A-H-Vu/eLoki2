@@ -32,5 +32,10 @@ public class MouseRightClick extends Action {
 		}
 		return ActionCompatibility.Incompatible;
 	}
+	
+	@Override
+	protected ActionTick.Response actionTickResponse() {
+		return ActionTick.Response.UseTick;
+	}
 
 }

@@ -73,14 +73,14 @@ function init(ifHeight = 1200, ifWeight = 1920) {
     var capturing = false;
     var waiting = false;
     var mousePos;
-    var theInterval;
+    // var theInterval;
 
     function toggleCapturing(ifrmDoc) {
         if (capturing) {
             //body.style.backgroundColor = 'white';
             ifrmDoc.onmousemove = null;
             ifrmDoc.onclick = null;
-            clearInterval(theInterval);
+            // clearInterval(theInterval);
             printButton.disabled = false;
             downloadButton.disabled = false;
             
@@ -101,10 +101,10 @@ function init(ifHeight = 1200, ifWeight = 1920) {
                     t: new Date()
                 })
             }
-            theInterval = setInterval(() => {
-                if (!!mousePos)
-                    ticks.push(mousePos);
-            }, 1);
+            // theInterval = setInterval(() => {
+            //     if (!!mousePos)
+            //         ticks.push(mousePos);
+            // }, 1);
             //printButton.disabled = true;
             //downloadButton.disabled = true;
         }
@@ -129,10 +129,12 @@ function init(ifHeight = 1200, ifWeight = 1920) {
         })
         console.log(ticks);
         doc.onmousemove = event => {
-            mousePos = {
-                content: `mouseMoveScroll ${event.x} ${event.y} ${window.pageXOffset} ${window.pageYOffset}`,
-                t: new Date()
-            };
+            if(capturing) {
+                ticks.push({
+                    content: `mouseMoveScroll ${event.x} ${event.y} ${window.pageXOffset} ${window.pageYOffset}`,
+                    t: new Date()
+                });
+            }
         };
 
         doc.onclick = event => {

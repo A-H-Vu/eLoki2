@@ -135,7 +135,7 @@ function init(ifHeight = 1200, ifWeight = 1920) {
     var capturing = false;
     var waiting = false;
     var mousePos;
-    var theInterval;
+    //var theInterval;
 
     function toggleCapturing(ifrmDoc) {
         console.log("toggle");
@@ -143,7 +143,7 @@ function init(ifHeight = 1200, ifWeight = 1920) {
             body.style.backgroundColor = 'white';
             ifrmDoc.onmousemove = null;
             ifrmDoc.onclick = null;
-            clearInterval(theInterval);
+            //clearInterval(theInterval);
             printButton.disabled = false;
             downloadButton.disabled = false;
             ticks.push({
@@ -169,12 +169,12 @@ function init(ifHeight = 1200, ifWeight = 1920) {
                 })
             // }
             d = new Date()
-            theInterval = setInterval(() => {
-                //For some reason this appears to start running prior to toggle capturing being pressed
-                //Prevents mouse pos recordings from before the start of the current run from being recorded
-                if (!!mousePos&&mousePos.t>d)
-                    ticks.push(mousePos);
-            }, 1);
+            // theInterval = setInterval(() => {
+            //     //For some reason this appears to start running prior to toggle capturing being pressed
+            //     //Prevents mouse pos recordings from before the start of the current run from being recorded
+            //     if (!!mousePos&&mousePos.t>d)
+            //         ticks.push(mousePos);
+            // }, 1);
             printButton.disabled = true;
             //downloadButton.disabled = true;
         }
@@ -218,10 +218,12 @@ function init(ifHeight = 1200, ifWeight = 1920) {
         }
 
         ifrmDoc.onmousemove = event => {
-            mousePos = {
-                content: `mouseMoveScroll ${event.x} ${event.y} ${ifrm.contentWindow.pageXOffset} ${ifrm.contentWindow.pageYOffset}`,
-                t: new Date()
-            };
+            if (capturing) {
+                ticks.push({
+                    content: `mouseMoveScroll ${event.x} ${event.y} ${ifrm.contentWindow.pageXOffset} ${ifrm.contentWindow.pageYOffset}`,
+                    t: new Date()
+                });
+            }
         };
 
         ifrmDoc.onclick = event => {

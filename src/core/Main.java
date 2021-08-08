@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import capture.MouseCapture;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
@@ -128,6 +129,9 @@ public class Main {
 				} catch (IOException e) {
 					System.err.println("Error reading script "+res.getString("script"));
 					System.err.println(e.getMessage());
+				}
+				if(client instanceof Closeable) {
+					((Closeable)client).close();
 				}
 			}
 			else if(res.getBoolean("scrape")!=null) {
