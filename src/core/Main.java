@@ -51,7 +51,6 @@ public class Main {
 				.help("Run a script")
 				.setDefault("runscript", true);
 		runscript.addArgument("script")
-			.action(Arguments.append())
 			.nargs("+")
 			.help("Script to run");
 //		runscript.addArgument("--script")
@@ -106,7 +105,7 @@ public class Main {
 		
 		try {
 			Namespace res = parser.parseArgs(args);
-			System.out.println(res);
+			System.out.println("res"+res);
 			//resolve the client
 			String clientName = res.getString("client");
 			Client client = null;
@@ -129,8 +128,7 @@ public class Main {
 					System.err.println("The selenium client and driver must be set using --client and --driver");
 					System.exit(1);
 				}
-				List<String> scripts = (List<String>) res.getList("script").stream().flatMap(s -> {return ((List)s).stream();}).map(s -> s.toString()).collect(Collectors.toList());
-				for(Object s:scripts) {
+				for(Object s:res.getList("script")) {
 					try {
 						Action initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
 						defaultController.runScript(initial, client);
