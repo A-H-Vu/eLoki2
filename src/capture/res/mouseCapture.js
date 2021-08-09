@@ -45,7 +45,7 @@ function iframeURLChange(iframe, callback) {
 
 var ticks = [];
 
-function init(ifHeight = 1200, ifWeight = 1920) {
+function init(ifHeight = 1200, ifWidth = 1920) {
     var html = document.querySelector('html');
     for (let element of html.children)
         if (element.tagName !== 'HEAD')
@@ -125,7 +125,7 @@ function init(ifHeight = 1200, ifWeight = 1920) {
     ifrm.setAttribute('src', window.location.origin);
     body.appendChild(ifrm);
     ifrm.style.height = ifHeight + 'px';
-    ifrm.style.width = ifWeight + 'px';
+    ifrm.style.width = ifWidth + 'px';
     ifrm.style.padding = '0';
     ifrm.style.margin = '0';
     ifrm.style.border = 'none';
@@ -136,6 +136,11 @@ function init(ifHeight = 1200, ifWeight = 1920) {
     var waiting = false;
     var mousePos;
     //var theInterval;
+
+    ticks.push({
+        content: `resize ${ifWidth} ${ifHeight}`,
+        t: new Date()
+    })
 
     function toggleCapturing(ifrmDoc) {
         console.log("toggle");
@@ -292,7 +297,10 @@ function download_ticks() {
 //tick information, url information etc
 
 
-
-
-init();
+if(arguments.length>2){
+    init(arguments[0], arguments[1]);
+}
+else{
+    init(window.innerHeight, window.innerWidth);
+}
 

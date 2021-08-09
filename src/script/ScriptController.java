@@ -88,7 +88,13 @@ public class ScriptController {
 		while(current != null) {
 			System.out.println(current.getRaw());
 			Action prev = current;
-			current = current.execute(client);
+			try {
+				current = current.execute(client);
+			}catch(Exception e) {
+				System.err.println("Error executing "+current.getRaw()+",skipping");
+				current = current.getNextAction();
+				e.printStackTrace();
+			}
 			if(prev.getTick().getResponse()==ActionTick.Response.ResetEpochToEnd) {
 				epoch = System.currentTimeMillis();
 				epochRel = prev.getTick().getValue();

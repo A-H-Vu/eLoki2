@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Random;
 
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -43,6 +44,9 @@ public class MouseCapture {
 		        	  //likely due to ready being undefined as it is not on the about:blank page
 		        	  continue mainloop;
 		          }
+		          try {
+		        	  Thread.sleep(10);
+		          }catch(InterruptedException e1) {}
 			}
 			String recordURL = ((String)jsExec.executeScript("return document.getElementById('iURL').value;"));
 			try {
@@ -75,7 +79,9 @@ public class MouseCapture {
 				if(!"active".equals(state)){
 					break;
 				}
-
+				try {
+		        	  Thread.sleep(10);
+		        }catch(InterruptedException e1) {}
 			}
 			if("quit".equals(state)) break;
 		}
@@ -108,6 +114,9 @@ public class MouseCapture {
 		        	  webStorage.getSessionStorage().removeItem(tempName);
 		        	  continue mainloop;
 		          }
+		          try {
+		        	  Thread.sleep(10);
+		          }catch(InterruptedException e1) {}
 			}
 		}
 		System.out.println(sb);

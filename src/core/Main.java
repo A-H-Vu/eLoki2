@@ -3,7 +3,6 @@ package core;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import capture.MouseCapture;
@@ -53,10 +52,6 @@ public class Main {
 		runscript.addArgument("script")
 			.nargs("+")
 			.help("Script to run");
-//		runscript.addArgument("--script")
-//			.required(true)
-//			.dest("script")
-//			.help("Script to run");
 		
 		
 		Subparser scraper = subparsers.addParser("scrape")
@@ -70,9 +65,6 @@ public class Main {
 			.metavar("DEPTH")
 			.type(Integer.class)
 			.help("Maximum depth from first url to scrape, 0 means scrape only the given url");
-//		scraper.addArgument("--user-agent")
-//			.metavar("UA")
-//			.help("Useragent to use, by default the JSoup default is used which is the java version");
 		scraper.addArgument("--timeout")
 			.metavar("MILLIS")
 			.setDefault(1000)
@@ -101,6 +93,7 @@ public class Main {
 		defaultController.addAction("delay", Wait.class);
 		defaultController.addAction("scrollWindow", ScrollWindow.class);
 		defaultController.addAction("attachMouse", AttachMouse.class);
+		defaultController.addAction("resize", ResizeWindow.class);
 		
 		
 		try {
@@ -182,7 +175,6 @@ public class Main {
 		} catch (ArgumentParserException e) {
 			parser.handleError(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
