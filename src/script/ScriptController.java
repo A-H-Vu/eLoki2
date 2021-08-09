@@ -85,15 +85,21 @@ public class ScriptController {
 		long epoch = System.currentTimeMillis();
 		Action current = script;
 		long epochRel = script.getTick().getValue();
+		int errors = 0;
 		while(current != null) {
 			System.out.println(current.getRaw());
 			Action prev = current;
 			try {
 				current = current.execute(client);
+				errors = 0;
 			}catch(Exception e) {
 				System.err.println("Error executing "+current.getRaw()+",skipping");
 				current = current.getNextAction();
 				e.printStackTrace();
+				errors++;
+				if(errors>10) {
+					break;
+				}
 			}
 			if(prev.getTick().getResponse()==ActionTick.Response.ResetEpochToEnd) {
 				epoch = System.currentTimeMillis();
