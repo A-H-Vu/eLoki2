@@ -45,6 +45,7 @@ public class Main {
 			.dest("headless")
 			.help("Hide the browser from view with Selenium Clients")
 			.action(Arguments.storeTrue());
+
 		parser.addArgument("--force-browser")
 			.dest("headless")
 			.help("Force the browser to be shown with Selenium Clients")
@@ -53,7 +54,6 @@ public class Main {
 		parser.addArgument("--version").action(Arguments.version());
 		
 		Subparsers subparsers = parser.addSubparsers().help("sub-command help");
-		
 		Subparser runscript = subparsers.addParser("run")
 				.help("Run a script")
 				.setDefault("runscript", true);

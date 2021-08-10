@@ -86,20 +86,26 @@ public class ScriptController {
 		Action current = script;
 		long epochRel = script.getTick().getValue();
 		int errors = 0;
+		boolean skip = false;
 		while(current != null) {
 			System.out.println(current.getRaw());
 			Action prev = current;
-			try {
-				current = current.execute(client);
-				errors = 0;
-			}catch(Exception e) {
-				System.err.println("Error executing "+current.getRaw()+",skipping");
-				current = current.getNextAction();
-				e.printStackTrace();
-				errors++;
-				if(errors>10) {
-					break;
+			if(!skip) {
+				try {
+					current = current.execute(client);
+					errors = 0;
+				}catch(Exception e) {
+					System.err.println("Error executing "+current.getRaw()+",skipping");
+					current = current.getNextAction();
+					e.printStackTrace();
+					errors++;
+					if(errors>10) {
+						break;
+					}
 				}
+			}
+			else {
+				skip = false;
 			}
 			if(prev.getTick().getResponse()==ActionTick.Response.ResetEpochToEnd) {
 				epoch = System.currentTimeMillis();
@@ -114,13 +120,13 @@ public class ScriptController {
 				delay = (current.getTick().getValue()-epochRel)-(System.currentTimeMillis()-epoch);
 			}
 			//Skip if delay is negative/lagging significantly
-			if(delay<0&&type == ActionTick.Response.Skippable) {
-				//TODO implement skipping logic
+			if(delay<-10&&type == ActionTick.Response.Skippable) {
+				skip = true;
 			}
 			
 			if(delay > 2) {
 				try {
-					Thread.sleep(delay);
+					Thread.sleep(delay-2);
 				} catch (InterruptedException e) {
 					//presumably interrupted to stop script
 					break;
