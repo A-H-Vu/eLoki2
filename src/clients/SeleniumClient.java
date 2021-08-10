@@ -15,7 +15,9 @@ public abstract class SeleniumClient extends Client implements Closeable {
 	protected SeleniumClient(String name) {
 		super(name);
 	}
-
+	
+	public abstract void setHeadless(boolean headless);
+	
 	public WebDriver getWebDriver() {
 		return webdriver;
 	}

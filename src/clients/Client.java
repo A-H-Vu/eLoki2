@@ -17,5 +17,11 @@ public abstract class Client {
 	public String getName() {
 		return name;
 	}
+	
+	/**
+	 * Initialization function, called first before any non-configuration method to
+	 * initialize the webdriver and the corresponding browser.
+	 */
+	public abstract void init();
 
 }

@@ -6,11 +6,19 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.CapabilityType;
 
 public class SeleniumFirefox extends SeleniumClient {
-
+	private FirefoxOptions options;
+	
 	public SeleniumFirefox() {
 		super("Selenium-Firefox");
-		FirefoxOptions options = new FirefoxOptions();
+		options = new FirefoxOptions();
 		options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
+	}
+	
+	public void setHeadless(boolean headless) {
+		options.setHeadless(headless);
+	}
+	
+	public void init() {
 		super.webdriver = new FirefoxDriver(options);
 	}
 	

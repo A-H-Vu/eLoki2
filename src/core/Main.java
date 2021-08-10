@@ -41,6 +41,14 @@ public class Main {
 			.dest("client")
 			.help("sets the browser client to use");
 		parser.addArgument("--driver").dest("driver").help("Sets the driver used by selenium");
+		parser.addArgument("--headless")
+			.dest("headless")
+			.help("Hide the browser from view with Selenium Clients")
+			.action(Arguments.storeTrue());
+		parser.addArgument("--force-browser")
+			.dest("headless")
+			.help("Force the browser to be shown with Selenium Clients")
+			.action(Arguments.storeFalse());
 		parser.version(version);
 		parser.addArgument("--version").action(Arguments.version());
 		
@@ -78,7 +86,7 @@ public class Main {
 		Subparser capture = subparsers.addParser("capture")
 				.help("Record a session using Selenium")
 				.setDefault("capture", true);
-		capture.addArgument("--passive-capture")
+		capture.addArgument("--passive")
 			.dest("passive")
 			.action(Arguments.storeTrue())
 			.help("Use the passive session capture method, if iframe embedding is blocked by the site");
@@ -99,6 +107,12 @@ public class Main {
 		try {
 			Namespace res = parser.parseArgs(args);
 			System.out.println("res"+res);
+			//determine if to use headless browser or not
+			boolean headless = false;
+			if(res.getBoolean("headless")!=null) {
+				headless = res.getBoolean("headless");
+			}
+			
 			//resolve the client
 			String clientName = res.getString("client");
 			Client client = null;
@@ -121,6 +135,10 @@ public class Main {
 					System.err.println("The selenium client and driver must be set using --client and --driver");
 					System.exit(1);
 				}
+				if(client instanceof SeleniumClient) {
+					((SeleniumClient) client).setHeadless(headless);
+				}
+				client.init();
 				for(Object s:res.getList("script")) {
 					try {
 						Action initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
@@ -144,6 +162,13 @@ public class Main {
 					System.exit(1);
 				}
 				else {
+					SeleniumClient sClient = (SeleniumClient)client;
+					if(res.get("headless")==null) {
+						//default true
+						headless = true;
+					}
+					sClient.setHeadless(headless);
+					sClient.init();
 					SeleniumScraper selScraper = new SeleniumScraper((SeleniumClient)client);
 					selScraper.setDest(res.getString("dest"));
 					if(res.get("user-agent")!=null) {
@@ -163,6 +188,7 @@ public class Main {
 					System.err.println("The client must be a Selenium Client, either Selenium-Firefox or Selenium-Chrome");
 					System.exit(1);
 				}
+				client.init();
 				if(res.getBoolean("passive")) {
 					MouseCapture.captureRecording2((SeleniumClient)client);
 				}

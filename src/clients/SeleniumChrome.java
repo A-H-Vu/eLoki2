@@ -6,12 +6,18 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 
 public class SeleniumChrome extends SeleniumClient {
-
+	private ChromeOptions options;
 	public SeleniumChrome() {
 		super("Selenium-Chrome");
-		// TODO add another contructor with more properties
-		ChromeOptions options = new ChromeOptions();
+		options = new ChromeOptions();
 		options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
+	}
+	
+	public void setHeadless(boolean headless) {
+		options.setHeadless(headless);
+	}
+	
+	public void init() {
 		super.webdriver = new ChromeDriver(options);
 	}
 
