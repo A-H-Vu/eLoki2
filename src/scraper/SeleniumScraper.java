@@ -185,6 +185,7 @@ public class SeleniumScraper {
 	private static class QueueURL{
 		public String url;
 		public int depth;
+		public String prevUrl;
 		public QueueURL(String url, int depth){
 			this.url = url;
 			this.depth = depth;

@@ -94,6 +94,10 @@ public class MouseCapture {
 		StringBuilder sb = new StringBuilder();
 		WebStorage webStorage = (WebStorage) new Augmenter().augment(webdriver);
 		String js = readResource("/capture/res/mouseCapture_session.js");
+		String mainPage = readResource("/capture/res/mouseCapture_sessionMain.js");
+		webdriver.get("about:blank");
+		browser.awaitPageLoad(1000);
+		jsExec.executeScript(mainPage);
 		mainloop: while(true){
 			String tempName = genRandom(10);
 			tempName = (String)jsExec.executeScript(js, tempName);
@@ -101,7 +105,10 @@ public class MouseCapture {
 			while(true){
 		          if(!webdriver.getCurrentUrl().equals(currentURL)){
 		        	  if(webdriver.getCurrentUrl().equals("about:blank")) {
-		        		  break mainloop;
+		        		  browser.awaitPageLoad(1000);
+		        		  jsExec.executeScript(mainPage, sb.toString());
+		        		  webStorage.getSessionStorage().setItem("ticks", sb.toString());
+		        		  break;
 		        	  }
 		        	  System.out.println("Saving data from page "+currentURL);
 		        	  String data = webStorage.getSessionStorage().getItem(tempName);
@@ -113,6 +120,11 @@ public class MouseCapture {
 		        	  }
 		        	  webStorage.getSessionStorage().removeItem(tempName);
 		        	  continue mainloop;
+		          }
+		          if(webdriver.getCurrentUrl().equals("about:blank")) {
+		        	  if((Boolean)jsExec.executeScript("if(typeof quit !== 'undefined'){ return quit;} return false;")) {
+		        		  break mainloop;
+		        	  }
 		          }
 		          try {
 		        	  Thread.sleep(10);
