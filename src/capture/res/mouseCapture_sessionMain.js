@@ -27,6 +27,8 @@ function get_ticks() {
 	return window.sessionStorage.getItem("ticks");
 }
 
+buttonStyle = ""//"all: initial; align-content: center; align-items: center; align-self: center; background: #fff; border: 1px solid black; border-spacing : 1em; color: black; cursor: default; direction: rtl; display: block; filter: none; flex: 0 1 auto; float: none; font: 15px Arial, sans-serif; font-weight: normal; height: 1em; width: max-content; justify-content: center; letter-spacing: normal; left: auto; right: auto; top: auto; line-height: normal; letter-spacing: normal; margin: 1em; max-height: none; max-width: none; min-height: none; min-width: none; opacity: 1; outline: medium invert color; overflow: visible; padding: 0.5em; position: static; resize: none; tab-size: 8; text-align: left; text-align-last: left; text-decoration: none currentcolor solid; text-ident: 0; text-justify: auto; text-overflow: clip; text-shadow: none; text-transform: capitalize; visibility: visible; word-break: normal; word-spacing: normal; word-wrap: normal;"
+
 var title = document.createElement("title");
 title.innerText = "Mouse Capture";
 document.head.append(title);
@@ -46,14 +48,14 @@ document.body.append(info);
 
 var div = document.createElement('div');
 div.style = "all: initial; * {all: unset;}"
-div.style.display = 'flex';
+//div.style.display = '';
+document.body.append(div);
 
 
 var printButton = document.createElement('button');
 printButton.onclick = print_ticks;
 printButton.innerText = "Print Result";
 printButton.style = buttonStyle;
-printButton.disabled = true;
 div.appendChild(printButton);
 
 var downloadLabel = document.createElement('label');
@@ -73,7 +75,6 @@ div.appendChild(downloadInput);
 
 var downloadButton = document.createElement('button');
 downloadButton.innerText = "Download Result";
-downloadButton.disabled = true;
 downloadButton.onclick = download_ticks;
 downloadButton.id = "downloadButton";
 downloadButton.style = buttonStyle;
@@ -84,6 +85,13 @@ var downloadAnchor = document.createElement('a');
 downloadAnchor.hidden = true;
 downloadAnchor.id = "downloadAnchor";
 div.appendChild(downloadAnchor);
+
+var downloadButton = document.createElement('button');
+downloadButton.innerText = "Quit";
+downloadButton.setAttribute("onclick", "quitCapture()");
+downloadButton.style = buttonStyle;
+downloadButton.style.marginLeft = "1em";
+div.appendChild(downloadButton);
 
 var printDiv = document.createElement('div');
 div.style = "all: initial; * {all: unset;}"
@@ -100,6 +108,10 @@ clearButton.hidden = true;
 clearButton.style = buttonStyle;
 clearButton.id = 'clearButton'
 printDiv.appendChild(clearButton);
+
+var script = document.createElement("script");
+script.innerText = "var quit = false;function quitCapture(){quit = true;}"
+document.body.append(script);
 
 
 

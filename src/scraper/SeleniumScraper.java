@@ -9,6 +9,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,6 +31,8 @@ public class SeleniumScraper {
 	private Set<String> visited;
 	private Queue<QueueURL> urls = new ArrayDeque<QueueURL>();
 	private String baseUrl;
+	
+	private String[] prefixes;
 	
 	public SeleniumScraper(SeleniumClient client) {
 		this.client = client;
@@ -64,6 +67,9 @@ public class SeleniumScraper {
 		this.timeout = timeout;
 	}
 	
+	public void setPrefixes(String[] prefixes) {
+		this.prefixes = prefixes;
+	}
 	public void scrapeSite(String url) throws IOException {
 		BufferedWriter bWriter = Files.newBufferedWriter(dest.toPath(), 
 				StandardOpenOption.CREATE, 
@@ -149,11 +155,11 @@ public class SeleniumScraper {
 		} catch (InterruptedException e1) {}
 		client.awaitPageLoad(10000);
 		String finalURL = printURL(new URL(client.getWebDriver().getCurrentUrl()));
-		if(!finalURL.startsWith(baseUrl)) return;
+		if(!checkURL(finalURL)) return;
 		if(finalURL.equals(baseUrl)){
 			finalURL = finalURL+"/";
 		}
-		System.out.println(finalURL);
+		System.out.println(finalURL+" "+urls.size()+" left");
 		visited.add(finalURL);
 		//skip scraping for more urls if it's at the max depth
 		if(url.depth>=maxDepth) return;
@@ -176,16 +182,32 @@ public class SeleniumScraper {
 					continue;
 				}
 			}
-			if(u.startsWith(baseUrl)&&!seen.contains(u)){
+			if(checkURL(u)&&!seen.contains(u)){
 				seen.add(u);
 				urls.offer(new QueueURL(u, url.depth+1));
 			}
 		}
 	}
+	
+	private boolean checkURL(String url) {
+//		System.out.println("checking "+url);
+		if(prefixes!=null) {
+			for(String s:prefixes) {
+//				System.out.println("url "+url+" "+s+" "+url.startsWith(s));
+				if(url.startsWith(s)) {
+//					System.out.println(urls);
+					return true;
+				}
+			}
+		}
+		if(url.startsWith(baseUrl)) return true;
+		return false;
+		
+	}
 	private static class QueueURL{
 		public String url;
 		public int depth;
-		public String prevUrl;
+		//public String prevUrl;
 		public QueueURL(String url, int depth){
 			this.url = url;
 			this.depth = depth;

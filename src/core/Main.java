@@ -82,6 +82,11 @@ public class Main {
 			.metavar("FILE")
 			.setDefault("anchors")
 			.help("File to save the scraped urls to.");
+		scraper.addArgument("--add-prefix")
+			.metavar("URLs")
+			.dest("prefixes")
+			.nargs("+")
+			.help("Additional URL prefixes to scrape");
 		
 		Subparser capture = subparsers.addParser("capture")
 				.help("Record a session using Selenium")
@@ -171,8 +176,8 @@ public class Main {
 					sClient.init();
 					SeleniumScraper selScraper = new SeleniumScraper((SeleniumClient)client);
 					selScraper.setDest(res.getString("dest"));
-					if(res.get("user-agent")!=null) {
-						
+					if(res.get("prefixes")!=null) {
+						selScraper.setPrefixes(res.getList("prefixes").stream().map(Object::toString).collect(Collectors.toList()).toArray(new String[] {}));
 					}
 					selScraper.setMaxDepth(res.getInt("max_depth"));
 					selScraper.scrapeSite(res.getString("url"));
