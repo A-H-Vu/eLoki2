@@ -19,7 +19,10 @@ public class SeleniumFirefox extends SeleniumClient {
 		options.setHeadless(headless);
 	}
 	public void setProxy(Proxy proxy) {
-		options.setProxy(proxy);
+		String[] address = proxy.getSocksProxy().split(":");
+		options.addPreference("network.proxy.socks", address[0]);
+        options.addPreference("network.proxy.socks_port", address[1]);
+        options.addPreference("network.proxy.type", 1);
 	}
 	
 	public void init() {

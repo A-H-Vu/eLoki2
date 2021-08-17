@@ -19,7 +19,7 @@ public class SeleniumChrome extends SeleniumClient {
 	}
 	
 	public void setProxy(Proxy proxy) {
-		options.setProxy(proxy);
+		options.addArguments("--proxy-server=socks5://"+proxy.getSocksProxy());
 	}
 	
 	public void init() {
