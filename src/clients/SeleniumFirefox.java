@@ -1,5 +1,6 @@
 package clients;
 
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -16,6 +17,9 @@ public class SeleniumFirefox extends SeleniumClient {
 	
 	public void setHeadless(boolean headless) {
 		options.setHeadless(headless);
+	}
+	public void setProxy(Proxy proxy) {
+		options.setProxy(proxy);
 	}
 	
 	public void init() {

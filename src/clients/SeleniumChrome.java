@@ -1,5 +1,6 @@
 package clients;
 
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -15,6 +16,10 @@ public class SeleniumChrome extends SeleniumClient {
 	
 	public void setHeadless(boolean headless) {
 		options.setHeadless(headless);
+	}
+	
+	public void setProxy(Proxy proxy) {
+		options.setProxy(proxy);
 	}
 	
 	public void init() {

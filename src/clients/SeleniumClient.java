@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.PointerInput;
 
@@ -17,6 +18,8 @@ public abstract class SeleniumClient extends Client implements Closeable {
 	}
 	
 	public abstract void setHeadless(boolean headless);
+	
+	public abstract void setProxy(Proxy proxy);
 	
 	public WebDriver getWebDriver() {
 		return webdriver;

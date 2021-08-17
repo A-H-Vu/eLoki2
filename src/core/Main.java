@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.openqa.selenium.Proxy;
+
 import capture.MouseCapture;
 
 import java.io.Closeable;
@@ -45,11 +47,14 @@ public class Main {
 			.dest("headless")
 			.help("Hide the browser from view with Selenium Clients")
 			.action(Arguments.storeTrue());
-
 		parser.addArgument("--force-browser")
 			.dest("headless")
 			.help("Force the browser to be shown with Selenium Clients")
 			.action(Arguments.storeFalse());
+		parser.addArgument("--proxy")
+			.dest("proxy")
+			.metavar("address:port")
+			.help("Set the [address:port] of the SOCKS5 proxy to use");
 		parser.version(version);
 		parser.addArgument("--version").action(Arguments.version());
 		
@@ -133,6 +138,16 @@ public class Main {
 			else if(clientName.equalsIgnoreCase("SeleniumFirefox")) {
 				System.setProperty("webdriver.gecko.driver", res.getString("driver"));
 				client = new SeleniumFirefox();
+			}
+			//set stuff specific to Selenium instances
+			if(client instanceof SeleniumClient) {
+				SeleniumClient sClient = (SeleniumClient) client;
+				if(res.getString("proxy")!=null) {
+					Proxy proxy = new Proxy();
+					proxy.setSocksVersion(5);
+					proxy.setSocksProxy(res.getString("proxy"));
+					sClient.setProxy(proxy);
+				}
 			}
 			if(res.getBoolean("runscript")!=null) {
 				if(client==null) {
