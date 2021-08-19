@@ -43,14 +43,16 @@ public class Main {
 			.dest("client")
 			.help("sets the browser client to use");
 		parser.addArgument("--driver").dest("driver").help("Sets the driver used by selenium");
+		parser.addArgument("--full-browser")
+			.dest("headless")
+			.help("Use the full browser instead of a headless browser(if possible)")
+			.action(Arguments.storeFalse());
+		//headless after full browser option so the default value is false
+		//Arguments.storeTrue adds a default false to the destination value
 		parser.addArgument("--headless")
 			.dest("headless")
 			.help("Hide the browser from view with Selenium Clients")
 			.action(Arguments.storeTrue());
-		parser.addArgument("--force-browser")
-			.dest("headless")
-			.help("Force the browser to be shown with Selenium Clients")
-			.action(Arguments.storeFalse());
 		parser.addArgument("--proxy")
 			.dest("proxy")
 			.metavar("address:port")
@@ -158,6 +160,7 @@ public class Main {
 				if(client instanceof SeleniumClient) {
 					((SeleniumClient) client).setHeadless(headless);
 				}
+				System.out.println("headless="+headless);
 				client.init();
 				for(Object s:res.getList("script")) {
 					try {

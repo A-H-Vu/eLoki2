@@ -105,6 +105,7 @@ public class ScriptController {
 				}
 			}
 			else {
+				current = current.getNextAction();
 				skip = false;
 			}
 			if(prev.getTick().getResponse()==ActionTick.Response.ResetEpochToEnd) {
