@@ -31,7 +31,7 @@ public class MouseCapture {
 
 			String currentURL = webdriver.getCurrentUrl();
 			while(true){
-		          if(!webdriver.getCurrentUrl().equals(currentURL)){
+		          if(!webdriver.getCurrentUrl().equals(currentURL)&&!webdriver.getCurrentUrl().startsWith("blob:")){
 		        	  continue mainloop;
 		          }
 		          try{

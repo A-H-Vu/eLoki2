@@ -147,7 +147,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     
 
     var ifrm = document.createElement('iframe');
-    ifrm.setAttribute('src', window.location.origin);
+    ifrm.setAttribute('src', window.location.href);
     body.appendChild(ifrm);
     ifrm.style.height = ifHeight + 'px';
     ifrm.style.width = ifWidth + 'px';
