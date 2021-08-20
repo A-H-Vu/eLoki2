@@ -9,18 +9,21 @@ function download_ticks() {
 }
 
 function print_ticks() {
-	var clearButton = document.getElementById('clearButton');
-	var tickP = document.getElementById('tickP');
-	tickP.innerText = get_ticks();
-	clearButton.hidden = false;
+    var clearButton = document.getElementById('clearButton');
+    var tickP = document.getElementById('tickP');
+    var tn = document.createTextNode(get_ticks());
+    tickP.appendChild(tn);
+    clearButton.hidden = false;
+    tickP.hidden = false;
 
 }
 function clear_ticks() {
-	var clearButton = document.getElementById('clearButton');
-	var tickP = document.getElementById('tickP');
-	tickP.innerText = ''
-	clearButton.hidden = true;
-	
+    var clearButton = document.getElementById('clearButton');
+    var tickP = document.getElementById('tickP');
+    tickP.innerText = ''
+    clearButton.hidden = true;
+    tickP.hidden = true;
+    
 }
 
 function get_ticks() {
@@ -94,12 +97,19 @@ downloadButton.style.marginLeft = "1em";
 div.appendChild(downloadButton);
 
 var printDiv = document.createElement('div');
-div.style = "all: initial; * {all: unset;}"
+//printDiv.style = "all: initial; * {all: unset;}"
 document.body.append(printDiv);
 
-var tickP = document.createElement('p');
+var tickP = document.createElement('textarea');
 tickP.id = 'tickP'
+//lazy values for height/width
+tickP.style.width = '50%';
+tickP.style.height = '50%';
+tickP.hidden = true;
 printDiv.appendChild(tickP);
+
+var br = document.createElement('br');
+printDiv.append(br);
 
 var clearButton = document.createElement('button');
 clearButton.onclick = clear_ticks;

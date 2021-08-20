@@ -43,6 +43,8 @@ function iframeURLChange(iframe, callback) {
     attachUnload();
 }
 
+
+
 var ticks = [];
 
 function init(ifHeight = 1200, ifWidth = 1920) {
@@ -117,9 +119,32 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     quitButton.innerText = "Quit";
     quitButton.style = buttonStyle;
     div.appendChild(quitButton);
-    
-
     body.appendChild(div);
+
+    var printDiv = document.createElement('div');
+    printDiv.style = "all: initial; * {all: unset;}"
+    printDiv.style.display = 'flex';
+    body.append(printDiv);
+
+    var tickP = document.createElement('textarea');
+    tickP.id = 'tickP'
+    //lazy values for height/width
+    tickP.style.width = '50%';
+    tickP.style.height = '500px';
+    tickP.hidden = true;
+    printDiv.appendChild(tickP);
+
+    var br = document.createElement('br');
+    printDiv.append(br);
+
+    var clearButton = document.createElement('button');
+    clearButton.onclick = clear_ticks;
+    clearButton.innerText = "Clear ticks";
+    //clearButton.style = buttonStyle;
+    clearButton.hidden = true;
+    clearButton.id = 'clearButton'
+    printDiv.appendChild(clearButton);
+    
 
     var ifrm = document.createElement('iframe');
     ifrm.setAttribute('src', window.location.origin);
@@ -277,11 +302,29 @@ function get_ticks() {
     return result;
 }
 
+// function print_ticks() {
+//     var body = document.querySelector('body');
+//     body.style.fontFamily = 'monospace';
+//     body.style.color = 'black';
+//     body.innerText = get_ticks();
+// }
+
 function print_ticks() {
-    var body = document.querySelector('body');
-    body.style.fontFamily = 'monospace';
-    body.style.color = 'black';
-    body.innerText = get_ticks();
+    var clearButton = document.getElementById('clearButton');
+    var tickP = document.getElementById('tickP');
+    var tn = document.createTextNode(get_ticks());
+    tickP.appendChild(tn);
+    clearButton.hidden = false;
+    tickP.hidden = false;
+
+}
+function clear_ticks() {
+    var clearButton = document.getElementById('clearButton');
+    var tickP = document.getElementById('tickP');
+    tickP.innerText = ''
+    clearButton.hidden = true;
+    tickP.hidden = true;
+    
 }
 
 function download_ticks() {
@@ -297,10 +340,10 @@ function download_ticks() {
 //tick information, url information etc
 
 
-if(arguments.length>2){
-    init(arguments[0], arguments[1]);
-}
-else{
+// if(arguments.length>2){
+//     init(arguments[0], arguments[1]);
+// }
+// else{
     init(window.innerHeight, window.innerWidth);
-}
+// }
 
