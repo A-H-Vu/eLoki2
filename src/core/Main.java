@@ -44,11 +44,9 @@ public class Main {
 			.help("sets the browser client to use");
 		parser.addArgument("--driver").dest("driver").help("Sets the driver used by selenium");
 		parser.addArgument("--full-browser")
-			.dest("headless")
+			.dest("fullBrowser")
 			.help("Use the full browser instead of a headless browser(if possible)")
 			.action(Arguments.storeFalse());
-		//headless after full browser option so the default value is false
-		//Arguments.storeTrue adds a default false to the destination value
 		parser.addArgument("--headless")
 			.dest("headless")
 			.help("Hide the browser from view with Selenium Clients")
@@ -160,7 +158,6 @@ public class Main {
 				if(client instanceof SeleniumClient) {
 					((SeleniumClient) client).setHeadless(headless);
 				}
-				System.out.println("headless="+headless);
 				client.init();
 				for(Object s:res.getList("script")) {
 					try {
@@ -186,10 +183,7 @@ public class Main {
 				}
 				else {
 					SeleniumClient sClient = (SeleniumClient)client;
-					if(res.get("headless")==null) {
-						//default true
-						headless = true;
-					}
+					headless = res.getBoolean("fullBrowser");
 					sClient.setHeadless(headless);
 					sClient.init();
 					SeleniumScraper selScraper = new SeleniumScraper((SeleniumClient)client);
