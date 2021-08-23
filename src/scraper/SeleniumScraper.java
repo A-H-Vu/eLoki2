@@ -4,8 +4,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.IDN;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayDeque;
@@ -69,25 +76,37 @@ public class SeleniumScraper {
 	
 	public void setPrefixes(String[] prefixes) {
 		this.prefixes = prefixes;
+		for(int i = 0; i<prefixes.length; i++) {
+			try {
+				URL url = new URL(prefixes[i]);
+				URI uri = new URI(url.getProtocol(), url.getUserInfo(), IDN.toASCII(url.getHost()), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+				this.prefixes[i] = uri.toASCIIString();
+			} catch (MalformedURLException | URISyntaxException e) {}
+		}
 	}
-	public void scrapeSite(String url) throws IOException {
+	public void scrapeSite(String urlStr) throws IOException {
 		BufferedWriter bWriter = Files.newBufferedWriter(dest.toPath(), 
 				StandardOpenOption.CREATE, 
 				StandardOpenOption.TRUNCATE_EXISTING, 
 				StandardOpenOption.WRITE);
 		PrintWriter out = new PrintWriter(bWriter);
 		
-		baseUrl = url;
+		
+		baseUrl = urlStr;
 		
 		//Some checks to make sure that the given string is a proper url
+		//also some stuff to make sure the query portion is url encoded
 		try{
-			new URL(baseUrl);
-			
-		}catch(MalformedURLException e){
+			URL url = new URL(baseUrl);
+			URI uri = new URI(url.getProtocol(), url.getUserInfo(), IDN.toASCII(url.getHost()), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+			baseUrl = uri.toASCIIString();
+		}catch(MalformedURLException | URISyntaxException e){
 			try{
 				//assume most sites will auto upgrade an http connection to https
-				baseUrl = new URL("http://"+baseUrl).toString();
-			}catch(MalformedURLException e1){
+				URL url = new URL("http://"+baseUrl);
+				URI uri = new URI(url.getProtocol(), url.getUserInfo(), IDN.toASCII(url.getHost()), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+				baseUrl = uri.toASCIIString();
+			}catch(MalformedURLException | URISyntaxException e1){
 				System.err.println(e1.getMessage());
 				//TODO better error handling
 				System.exit(1);
@@ -173,6 +192,7 @@ public class SeleniumScraper {
 		}
 		for(WebElement e:body.findElementsByCssSelector("a[href]")){
 			String u = e.getAttribute("href");
+//			System.out.println("u="+u);
 			try {
 				new URL(u);
 			}catch(MalformedURLException e1) {
@@ -191,10 +211,13 @@ public class SeleniumScraper {
 	
 	private boolean checkURL(String url) {
 //		System.out.println("checking "+url);
+		url = URLDecoder.decode(url, StandardCharsets.UTF_8);
 		if(prefixes!=null) {
 			for(String s:prefixes) {
 //				System.out.println("url "+url+" "+s+" "+url.startsWith(s));
-				if(url.startsWith(s)) {
+				//decode the url to normalize, fixes issues where for some reason parts of the path
+				//may be url encoded instead of just the query portion of the url
+				if(url.startsWith(URLDecoder.decode(s, StandardCharsets.UTF_8))) {
 //					System.out.println(urls);
 					return true;
 				}
