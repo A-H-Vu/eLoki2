@@ -7,6 +7,13 @@ import org.openqa.selenium.interactions.PointerInput;
 
 import clients.Client;
 import clients.SeleniumClient;
+
+/**
+ * An action that moves the mouse to the given x, y location and scrolls the main
+ * document location to the given scrollX and scrollY values.
+ * @author Allen
+ *
+ */
 //temporary class for compatibility with the current script generation
 public class MouseMoveScroll extends Action {
 	private int X;

@@ -3,6 +3,13 @@ package script.action;
 import clients.Client;
 import clients.SeleniumClient;
 
+/**
+ * Action used to show the position of the mouse visually.
+ * 
+ * On execution it runs some javascript that attaches a mouse listener which moves an image of a mouse with the mouse
+ * @author Allen
+ *
+ */
 public class AttachMouse extends Action{
 
 	public AttachMouse(String raw) {
@@ -12,6 +19,7 @@ public class AttachMouse extends Action{
 	public Action execute(Client client) {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
+			//Function copied from stackoverflow that simply puts an image of a mouse at the cursor's location
 			sClient.getJSExecutor().executeScript("function enableCursor() {\n"
 					+ "  var seleniumFollowerImg = document.createElement(\"img\");\n"
 					+ "  seleniumFollowerImg.setAttribute('src', 'data:image/png;base64,'\n"

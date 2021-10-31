@@ -5,6 +5,11 @@ import org.openqa.selenium.Dimension;
 import clients.Client;
 import clients.SeleniumClient;
 
+/**
+ * Resizes the window to the given width and height
+ * @author Allen
+ *
+ */
 public class ResizeWindow extends Action {
 	private int width;
 	private int height;

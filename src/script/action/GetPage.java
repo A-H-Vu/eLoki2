@@ -7,6 +7,11 @@ import java.text.ParseException;
 import clients.Client;
 import clients.SeleniumClient;
 
+/**
+ * Action that navigates the browser to a specific page
+ * @author Allen
+ *
+ */
 public class GetPage extends Action {
 	String pageURL = "about;blank";
 	

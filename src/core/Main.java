@@ -30,12 +30,16 @@ import script.ScriptController;
 import script.action.*;
 
 public class Main {
-	
+	//Version string, should be same as the version string in the pom.xml file
 	private static String version = "0.2.3";
+	//Class that runs scripts, for now only create one as default, in the future one will be used on each thread
 	public static ScriptController defaultController = new ScriptController();
+	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
+		//Argument parser section sets up the parameters for argparse4j
+		//Main parser which parses the main arguments
 		ArgumentParser parser = ArgumentParsers.newFor("eloki2").build()
 				.description("A tool to generate, record and replay browser sessions");
 		parser.addArgument("--client")
@@ -58,6 +62,7 @@ public class Main {
 		parser.version(version);
 		parser.addArgument("--version").action(Arguments.version());
 		
+		//Run sub-module, used to run scripts
 		Subparsers subparsers = parser.addSubparsers().help("sub-command help");
 		Subparser runscript = subparsers.addParser("run")
 				.help("Run a script")
@@ -66,9 +71,9 @@ public class Main {
 			.nargs("+")
 			.help("Script to run");
 		
-		
+		//Scraper sub-module, used to scrape websites
 		Subparser scraper = subparsers.addParser("scrape")
-				.help("Scrape a website using JSoup")
+				.help("Scrape a website using Selenium")
 				.setDefault("scrape", true);
 		scraper.addArgument("url")
 			.required(true)
@@ -93,6 +98,7 @@ public class Main {
 			.nargs("+")
 			.help("Additional URL prefixes to scrape");
 		
+		//Sub-module for used to capture recordings
 		Subparser capture = subparsers.addParser("capture")
 				.help("Record a session using Selenium")
 				.setDefault("capture", true);
@@ -115,8 +121,11 @@ public class Main {
 		
 		
 		try {
+			//Parse arguments from commandline
 			Namespace res = parser.parseArgs(args);
+			//printout as debug
 			System.out.println("res"+res);
+			
 			//determine if to use headless browser or not
 			boolean headless = false;
 			if(res.getBoolean("headless")!=null) {
@@ -139,9 +148,11 @@ public class Main {
 				System.setProperty("webdriver.gecko.driver", res.getString("driver"));
 				client = new SeleniumFirefox();
 			}
+			
 			//set stuff specific to Selenium instances
 			if(client instanceof SeleniumClient) {
 				SeleniumClient sClient = (SeleniumClient) client;
+				//Set the proxy, SOCKS v5. Can be used to tunnel through tor
 				if(res.getString("proxy")!=null) {
 					Proxy proxy = new Proxy();
 					proxy.setSocksVersion(5);
@@ -149,7 +160,10 @@ public class Main {
 					sClient.setProxy(proxy);
 				}
 			}
+			
+			//Section of the code that handles the run sub-module
 			if(res.getBoolean("runscript")!=null) {
+				//Various checks related to the client
 				if(client==null) {
 					//TODO change to more generic message
 					System.err.println("The selenium client and driver must be set using --client and --driver");
@@ -158,6 +172,7 @@ public class Main {
 				if(client instanceof SeleniumClient) {
 					((SeleniumClient) client).setHeadless(headless);
 				}
+				//Init client and iterate through the list of given scripts and execute them one after another
 				client.init();
 				for(Object s:res.getList("script")) {
 					try {
@@ -168,11 +183,15 @@ public class Main {
 						System.err.println(e.getMessage());
 					}
 				}
+				//Close the client
 				if(client instanceof Closeable) {
 					((Closeable)client).close();
 				}
 			}
+			
+			//Section of the code that handles the scraping sub-module
 			else if(res.getBoolean("scrape")!=null) {
+				//Various checks related to the client
 				if(client==null) {
 					System.err.println("The selenium client and driver must be set using --client and --driver");
 					System.exit(1);
@@ -182,21 +201,33 @@ public class Main {
 					System.exit(1);
 				}
 				else {
+					//Initialize the client
 					SeleniumClient sClient = (SeleniumClient)client;
 					headless = res.getBoolean("fullBrowser");
 					sClient.setHeadless(headless);
 					sClient.init();
+					
+					//Initialize the scraper
 					SeleniumScraper selScraper = new SeleniumScraper((SeleniumClient)client);
+					//Dest is the destination file to write to
 					selScraper.setDest(res.getString("dest"));
+					//Prefixes are the list of url prefixes that the scraper will look for in addition to the baseurl
 					if(res.get("prefixes")!=null) {
 						selScraper.setPrefixes(res.getList("prefixes").stream().map(Object::toString).collect(Collectors.toList()).toArray(new String[] {}));
 					}
+					//max-depth is the maximum depth of links to follow, depth of a link is minimum # of clicks
+					//needed to get to that link from the initial page
 					selScraper.setMaxDepth(res.getInt("max_depth"));
+					
+					//Start the scaper
 					selScraper.scrapeSite(res.getString("url"));
 				}
 
 			}
+			
+			//Section of the code that handles the capture sub-module
 			else if(res.getBoolean("capture")!=null) {
+				//Usual client checks
 				if(client==null) {
 					System.err.println("The selenium client and driver must be set using --client and --driver");
 					System.exit(1);
@@ -206,6 +237,7 @@ public class Main {
 					System.exit(1);
 				}
 				client.init();
+				//Select capture method based on the --passive arg
 				if(res.getBoolean("passive")) {
 					MouseCapture.captureRecording2((SeleniumClient)client);
 				}
@@ -214,7 +246,8 @@ public class Main {
 				}
 				
 			}
-
+			
+			//Handle some errors
 		} catch (ArgumentParserException e) {
 			parser.handleError(e);
 		} catch (IOException e) {
@@ -222,6 +255,12 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * A custom argumentChoice class for ArgParse4j to handle options where there are multiple choices
+	 * while ignoring the case of the text such that both `FIREFOX` and `Firefox` match to the same thing
+	 * @author Allen
+	 *
+	 */
 	private static class IgnoreChoice implements ArgumentChoice {
 		private String options[];
 		private IgnoreChoice(String... options) {

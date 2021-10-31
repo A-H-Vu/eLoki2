@@ -6,6 +6,11 @@ import org.openqa.selenium.interactions.PointerInput;
 import clients.Client;
 import clients.SeleniumClient;
 
+/**
+ * Action that executes a mouse right click at the current location
+ * @author Allen
+ *
+ */
 public class MouseRightClick extends Action {
 
 	public MouseRightClick(String raw) {

@@ -6,18 +6,37 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 
+/**
+ * Class representing the Selenium Client for the chrome browser
+ * @author Allen
+ *
+ */
 public class SeleniumChrome extends SeleniumClient {
 	private ChromeOptions options;
 	public SeleniumChrome() {
 		super("Selenium-Chrome");
+		//Allow alerts to be displayed to the user without needing them to be handled by Selenium
+		//Used by the mouseCapture scripts
 		options = new ChromeOptions();
 		options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 	}
 	
+	/**
+	 * Sets headless mode, where the GUI of the browser is hidden
+	 * Some sites may be able to detect a headless browser
+	 */
 	public void setHeadless(boolean headless) {
 		options.setHeadless(headless);
 	}
 	
+	/**
+	 * Sets the SOCKS proxy
+	 * 
+	 * Use {@link Proxy#setSocksProxy} and {@link Proxy#setSocksVersion(Integer)} to set.
+	 * 
+	 * Optionally set usernamd and password if necessary
+	 * @param proxy The {@link Proxy} object with the SOCKS proxy information
+	 */
 	public void setProxy(Proxy proxy) {
 		options.addArguments("--proxy-server=socks5://"+proxy.getSocksProxy());
 	}

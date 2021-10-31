@@ -8,6 +8,11 @@ import org.openqa.selenium.interactions.PointerInput;
 import clients.Client;
 import clients.SeleniumClient;
 
+/**
+ * An action that moves the mouse to the given x, y location
+ * @author Allen
+ *
+ */
 public class MouseMove extends Action {
 
 	// co-ordinates to move to

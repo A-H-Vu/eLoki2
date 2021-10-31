@@ -7,6 +7,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import clients.Client;
 import clients.SeleniumClient;
 
+/**
+ * Action that waits for the page to load checking for document.readyState === "complete
+ * @author Allen
+ *
+ */
 public class AwaitPageLoad extends Action {
 	int timeout;
 

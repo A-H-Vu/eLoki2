@@ -250,7 +250,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         ifrmDoc.onmousemove = event => {
             if (capturing) {
                 ticks.push({
-                    content: `mouseMoveScroll ${event.x} ${event.y} ${ifrm.contentWindow.pageXOffset} ${ifrm.contentWindow.pageYOffset}`,
+                    content: `mouseMoveScroll ${event.x} ${event.y} ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
                     t: new Date()
                 });
             }
@@ -276,6 +276,14 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         ifrmDoc.body.onkeydown = event => {
             if (event.ctrlKey) {
                 toggleCapturing(ifrmDoc);
+            }
+        }
+        ifrmDoc.body.onscroll = event =>{
+            if(capturing) {
+                ticks.push({
+                    content: `scrollWindow ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
+                    t: new Date()
+                })
             }
         }
         

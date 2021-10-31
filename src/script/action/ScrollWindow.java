@@ -3,6 +3,11 @@ package script.action;
 import clients.Client;
 import clients.SeleniumClient;
 
+/**
+ * Scrolls the main document window to the given scrollX and scrollY values
+ * @author Allen
+ *
+ */
 public class ScrollWindow extends Action {
 	private int scrollX;
 	private int scrollY;
