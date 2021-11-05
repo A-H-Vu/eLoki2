@@ -4,8 +4,15 @@
 // import('http(s)://<domain></path>/mouseCapture.js').then(m => m.init(<height>, <width>));
 // ex. import('http://www.eloki.tk/mouseCapture.js').then(m => m.init());
 
-//var state = "active";
+//Default recorder for eLoki
+//Records session by embedding the webpage in an iframe
+//This makes it easier to record the session as the script only has to be injected once, any url changes
+//can be easily checked by checking the iframe contentwindow href
+//Additionally with this method the recorded session window can be larger than the browser window/display
+//as the iframe can be sized independantly from the browser
 
+//function that is called when the iframe's url changes
+//executes the callback function once the url has changed 
 function iframeURLChange(iframe, callback) {
     var lastDispatched = null;
 
@@ -44,10 +51,12 @@ function iframeURLChange(iframe, callback) {
 }
 
 
-
+//stores the recording
 var ticks = [];
 
+//ifHeight/ifWidth sets the iframe size
 function init(ifHeight = 1200, ifWidth = 1920) {
+    //This section creates the header
     var html = document.querySelector('html');
     for (let element of html.children)
         if (element.tagName !== 'HEAD')
@@ -157,23 +166,29 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     html.appendChild(body);
 
 
+    //Most of the recording logic starts here
+
     var capturing = false;
     var waiting = false;
     var mousePos;
     //var theInterval;
-
+    //for initial load, record window size
     ticks.push({
         content: `resize ${ifWidth} ${ifHeight}`,
         t: new Date()
     })
 
+    //Turns the recording on/off, capturing = true = recording
     function toggleCapturing(ifrmDoc) {
         console.log("toggle");
         if (capturing) {
+            //update background
             body.style.backgroundColor = 'white';
+            //remove listeners
             ifrmDoc.onmousemove = null;
             ifrmDoc.onclick = null;
             //clearInterval(theInterval);
+            //renable buttons
             printButton.disabled = false;
             downloadButton.disabled = false;
             ticks.push({
@@ -185,6 +200,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
             //     t: new Date()
             // });
         } else {
+            //update background
             body.style.backgroundColor = 'red';
             // ticks.push({
             //     content: `started`,
@@ -193,6 +209,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
 
             // console.log(ticks.length)
             // if(ticks.length===0){
+                //record new pageurl
                 ticks.push({
                     content: `getPage `+ifrm.contentWindow.location,
                     t: new Date()
@@ -206,7 +223,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
             //         ticks.push(mousePos);
             // }, 1);
             printButton.disabled = true;
-            //downloadButton.disabled = true;
+            downloadButton.disabled = true;
         }
         capturing = !capturing;
     }
@@ -217,9 +234,11 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     //Selenium's UnexpectedAlertException is sticky, cannot wait for user input to close alert
     //alert('Make sure the mouse focus is on the iframe and hit Ctrl to start and stop recording.');
 
+    //adds listeners that will execute function when iframe url changes
     iframeURLChange(ifrm, newURL => {
         console.log("iFrame is on " + newURL);
         if (capturing) {
+            //push wait for page load event
             toggleCapturing(ifrm.contentWindow.document);
             ticks.push({
                 content: `waiting`,
@@ -229,23 +248,27 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         }
     });
 
+    //Key listener on the main document 
     document.body.onkeydown = event => {
         if (event.ctrlKey) {
             toggleCapturing(ifrm.contentWindow.document);
         }
     }
 
+    //Main function that registers all the listeners
     ifrm.onload = () => {
         var ifrmDoc = ifrm.contentWindow.document;
         // ticks.push({
         //     content: ifrmDoc.readyState,
         //     t: new Date()
         // });
-
+        //if url has changed, re-enable recording as page has loaded
         if (waiting) {
             toggleCapturing(ifrmDoc);
             waiting = false;
         }
+
+        //listeners for all events
 
         ifrmDoc.onmousemove = event => {
             if (capturing) {
@@ -273,6 +296,8 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                 });
             }
         };
+        //second key listener this time on the iframe
+        //Both will not be triggered at the same time
         ifrmDoc.body.onkeydown = event => {
             if (event.ctrlKey) {
                 toggleCapturing(ifrmDoc);
@@ -294,6 +319,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
 
 }
 
+//Various functions to get the recording
 function get_ticks() {
     var result = "";
     //result += "keys="+window.location.pathname
@@ -309,13 +335,6 @@ function get_ticks() {
     // result += tick.content + ' @ ' + tick.t.getMinutes() + ":" + tick.t.getSeconds() + ":" + tick.t.getMilliseconds() + '\n';
     return result;
 }
-
-// function print_ticks() {
-//     var body = document.querySelector('body');
-//     body.style.fontFamily = 'monospace';
-//     body.style.color = 'black';
-//     body.innerText = get_ticks();
-// }
 
 function print_ticks() {
     var clearButton = document.getElementById('clearButton');

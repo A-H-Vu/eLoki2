@@ -1,51 +1,25 @@
-// To test, you can upload this file on your webserver and comment out the line below
-// export { init };
-// Then, you can run this file by executing the following in your console:
-// import('http(s)://<domain></path>/mouseCapture.js').then(m => m.init(<height>, <width>));
-// ex. import('http://www.eloki.tk/mouseCapture.js').then(m => m.init());
+//Recording script for the eloki passive recorder
+//The script's responsibility is once injected, register the listeners to the page
+//that are used to capture the user's actions and when the page is unloaded, save the recorded script
+//into the session storage
+//
+//Should be used in situations where the default recorder cannot be used when embedding the site in an
+//iframe is blocked such as github.com
+//
 
-//var state = "active";
+//Arguments
+// 0 : alphanumeric string 
 
-//currently not being called, anonymous function js is unloaded on page change
-// function iframeURLChange(iframe, callback) {
-//     var lastDispatched = null;
+//Default name
+var tickName = "ticks"
+if(arguments.length>0){
+    tickName = arguments[0];
+}
 
-//     var dispatchChange = function () {
-//         var newHref = null;
-//         if (iframe.contentWindow !== null)
-//             newHref = iframe.contentWindow.location.href;
-
-//         if (newHref !== lastDispatched) {
-//             callback(newHref);
-//             lastDispatched = newHref;
-//         }
-//     };
-
-//     var unloadHandler = function () {
-//         // Timeout needed because the URL changes immediately after
-//         // the `unload` event is dispatched.
-//         setTimeout(dispatchChange, 0);
-//     };
-
-//     function attachUnload() {
-//         // Remove the unloadHandler in case it was already attached.
-//         // Otherwise, there will be two handlers, which is unnecessary.
-//         iframe.contentWindow.removeEventListener("unload", unloadHandler);
-//         iframe.contentWindow.addEventListener("unload", unloadHandler);
-//     }
-
-//     iframe.addEventListener("load", function () {
-//         attachUnload();
-
-//         // Just in case the change wasn't dispatched during the unload event...
-//         dispatchChange();
-//     });
-
-//     attachUnload();
-// }
 
 //A check to see if the url change was done via js or something, page has not actually unloaded
-
+//Function checks if an attribute named elokiSessionName is set, stores the random alphanumeric string
+//which the script saves the reccordings to 
 if(document.head.getAttribute("elokiSessionName")==null){
     document.head.setAttribute("elokiSessionName", tickName);
 }
@@ -54,80 +28,56 @@ else{
 }
 
 
-
-var tickName = "ticks"
-if(arguments.length>0){
-    tickName = arguments[0];
-}
-
+//Saves the recorded data when the page is unloaded
 function onUnload(){
     window.sessionStorage.setItem(tickName,get_ticks())
 }
 
+//stores the recorded actions
 var ticks = [];
 
-function init(ifHeight = 1200, ifWeight = 1920) {
+//Init function, most of the logic is here 
+function init() {
 
 
 
     var capturing = false;
     var waiting = false;
     var mousePos;
-    // var theInterval;
 
+
+    //TODO test if this block is needed or not
     function toggleCapturing(ifrmDoc) {
+        //stop capture
         if (capturing) {
-            //body.style.backgroundColor = 'white';
             ifrmDoc.onmousemove = null;
             ifrmDoc.onclick = null;
-            // clearInterval(theInterval);
             printButton.disabled = false;
             downloadButton.disabled = false;
             
-            // ticks.push({
-            //     content: `stopped`,
-            //     t: new Date()
-            // });
+        //start capture
         } else {
-            //body.style.backgroundColor = 'red';
-            // ticks.push({
-            //     content: `started`,
-            //     t: new Date()
-            // });
-            console.log(ticks.length)
+            //if new page/capture, record url
             if(ticks.length===0){
                 ticks.push({
                     content: `getPage `+window.location,
                     t: new Date()
                 })
             }
-            // theInterval = setInterval(() => {
-            //     if (!!mousePos)
-            //         ticks.push(mousePos);
-            // }, 1);
-            //printButton.disabled = true;
-            //downloadButton.disabled = true;
         }
         capturing = !capturing;
     }
 
-
+    //main function that initializes all the listeners
+    //mostly self explanatory, each listener pushes the event
+    //into the ticks array as json where content is the action for the event
+    //and t is the timestamp for the event
     function loadCaptureScript(){
         var doc = document.body;
-        // ticks.push({
-        //     content: ifrmDoc.readyState,
-        //     t: new Date()
-        // });
-
-        // if (waiting) {
-        //     toggleCapturing(doc);
-        //     waiting = false;
-        // }
         ticks.push({
             content: `getPage `+window.location,
             t: new Date()
         })
-        console.log(ticks);
         doc.onmousemove = event => {
             if(capturing) {
                 ticks.push({
@@ -154,8 +104,11 @@ function init(ifHeight = 1200, ifWeight = 1920) {
                 });
             }
         };
+
         window.onbeforeunload = onUnload
 
+        //Stuff to check if the window has lost focus, redirects to about:blank
+        //which causes the program to display the main page again 
         var checkFocus = () =>{
             if(document.hasFocus() == false){
                 window.location = "about:blank";
@@ -175,13 +128,7 @@ function init(ifHeight = 1200, ifWeight = 1920) {
         document.addEventListener(visibilityChange, checkFocus);
         window.addEventListener("focus", checkFocus);
         window.addEventListener("blur", checkFocus);
-
-        // ifrmDoc.body.onkeydown = event => {
-        //     if (event.ctrlKey) {
-        //         toggleCapturing(ifrmDoc);
-        //     }
-        // }
-
+        //start capturing once all listeners have been registered
         toggleCapturing(doc)
     }
 
@@ -219,6 +166,7 @@ function init(ifHeight = 1200, ifWeight = 1920) {
 
 }
 
+//function to convert the ticks array of json into text of the form @<timestamp in mili from epoch> <content> in each line
 function get_ticks() {
     var result = "";
     //result += "keys="+window.location.pathname
@@ -235,6 +183,7 @@ function get_ticks() {
     return result;
 }
 
+//TODO check if this is needed
 function print_ticks() {
     var body = document.querySelector('body');
     
@@ -245,7 +194,8 @@ function print_ticks() {
 }
 
 
-
+//call init function
 init();
 
+//return tickName so the program knows the key the recording is stored as in the sessondb
 return tickName;
