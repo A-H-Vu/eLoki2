@@ -63,6 +63,10 @@ function init() {
                     content: `getPage `+window.location,
                     t: new Date()
                 })
+                ticks.push({
+                    content: `attachMouse`,
+                    t: new Date()
+                })
             }
         }
         capturing = !capturing;
@@ -76,6 +80,10 @@ function init() {
         var doc = document.body;
         ticks.push({
             content: `getPage `+window.location,
+            t: new Date()
+        })
+        ticks.push({
+            content: `attachMouse`,
             t: new Date()
         })
         doc.onmousemove = event => {

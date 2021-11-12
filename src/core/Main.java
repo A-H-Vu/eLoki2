@@ -2,6 +2,7 @@ package core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -31,12 +32,12 @@ import script.action.*;
 
 public class Main {
 	//Version string, should be same as the version string in the pom.xml file
-	private static String version = "0.2.3";
+	private static String version = "0.2.4";
 	//Class that runs scripts, for now only create one as default, in the future one will be used on each thread
 	public static ScriptController defaultController = new ScriptController();
 	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, InstantiationException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, SQLException {
 		
 		//Argument parser section sets up the parameters for argparse4j
 		//Main parser which parses the main arguments
@@ -124,7 +125,7 @@ public class Main {
 			//Parse arguments from commandline
 			Namespace res = parser.parseArgs(args);
 			//printout as debug
-			System.out.println("res"+res);
+			//System.out.println("res"+res);
 			
 			//determine if to use headless browser or not
 			boolean headless = false;
@@ -135,18 +136,20 @@ public class Main {
 			//resolve the client
 			String clientName = res.getString("client");
 			Client client = null;
-			if(clientName.equalsIgnoreCase("SeleniumChrome")) {
-				if(res.getString("driver")==null) {
-					System.err.println("The ChromeDriver must be set using the --driver argument");
-					System.exit(1);
-				}
-				System.setProperty("webdriver.chrome.driver", res.getString("driver"));
-				client = new SeleniumChrome();
+			if(clientName!=null) {
+				if(clientName.equalsIgnoreCase("SeleniumChrome")) {
+					if(res.getString("driver")==null) {
+						System.err.println("The ChromeDriver must be set using the --driver argument");
+						System.exit(1);
+					}
+					System.setProperty("webdriver.chrome.driver", res.getString("driver"));
+					client = new SeleniumChrome();
 
-			}
-			else if(clientName.equalsIgnoreCase("SeleniumFirefox")) {
-				System.setProperty("webdriver.gecko.driver", res.getString("driver"));
-				client = new SeleniumFirefox();
+				}
+				else if(clientName.equalsIgnoreCase("SeleniumFirefox")) {
+					System.setProperty("webdriver.gecko.driver", res.getString("driver"));
+					client = new SeleniumFirefox();
+				}
 			}
 			
 			//set stuff specific to Selenium instances

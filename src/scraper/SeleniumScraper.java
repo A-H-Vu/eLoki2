@@ -13,10 +13,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeSet;
+import java.sql.SQLException;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.UnsupportedMimeTypeException;
@@ -32,15 +29,8 @@ public class SeleniumScraper {
 	private int maxDepth = Integer.MAX_VALUE;
 	private int timeout = 1000;
 	
-	/**
-	 * The set of all urls seen in their raw form
-	 */
-	private Set<String> seen;
-	/**
-	 * The set of all urls visited/found by the scraper, after normalizing by stripping the query and reference portions of the url
-	 */
-	private Set<String> visited;
-	private Queue<QueueURL> urls = new ArrayDeque<QueueURL>();
+	private ScraperSession session;
+	
 	/**
 	 * The baseUrl which is the original page given to scrape with only the directory portion i.e. www.xyz.com/index.html -> www.xyz.com/
 	 */
@@ -79,7 +69,7 @@ public class SeleniumScraper {
 	 */
 	public void setMaxDepth(int maxDepth) {
 		if(maxDepth<-1) {
-			maxDepth = 0;
+			maxDepth = Integer.MAX_VALUE;
 		}
 		this.maxDepth = maxDepth;
 	}
@@ -112,14 +102,17 @@ public class SeleniumScraper {
 	 * to configure the scraper
 	 * @param urlStr Base url to start scraping from
 	 * @throws IOException If an error ocurrs while writing
+	 * @throws SQLException 
 	 */
-	public void scrapeSite(String urlStr) throws IOException {
+	public void scrapeSite(String urlStr) throws IOException, SQLException {
 		BufferedWriter bWriter = Files.newBufferedWriter(dest.toPath(), 
 				StandardOpenOption.CREATE, 
 				StandardOpenOption.TRUNCATE_EXISTING, 
 				StandardOpenOption.WRITE);
 		PrintWriter out = new PrintWriter(bWriter);
-		
+		if(session==null) {
+			session = new ScraperSession();
+		}
 		
 		baseUrl = urlStr;
 		
@@ -141,12 +134,10 @@ public class SeleniumScraper {
 				System.exit(1);
 			}
 		}
-		//initialize the sets
-		seen = new TreeSet<String>();
-		visited = new TreeSet<String>();
-		//Start with the base url
-		urls.offer(new QueueURL(baseUrl,0));
-		
+		if(session.getBaseUrl().equals("")) {
+			//Start with the base url
+			session.offerUrl(new QueueURL(baseUrl,0));
+		}
 		//Get the actual url of the page, after any redirects etc
 		baseUrl = validateURL(baseUrl);
 		//Gets the base folder path of the url, the scraper will only look for links under that pattern
@@ -154,10 +145,29 @@ public class SeleniumScraper {
 		if(endSlash>7){
 			baseUrl = baseUrl.substring(0, endSlash);
 		}
-		System.out.println(baseUrl);
+		System.out.println("Scraping with base prefix="+baseUrl);
+		//check if theres an existing session
+		if(!session.getBaseUrl().equals("")) {
+			//If the database contains the scraping session for another site abort as it is not what the user likely wants
+			if(!session.getBaseUrl().equals(baseUrl)) {
+				System.err.println("The baseUrl for the existing scraping session does not match the supplied url, aborting");
+				System.err.println("Delete or rename the inprogressScrape.db file to remove the previous session");
+				return;
+			}
+			System.out.println("Found existing scraping session, adding existing prefix filters");
+			//effectively union the two sets of prefixes, the ones that already exist in the database
+			//with w/e new ones were supplied
+			session.addPrefixes(prefixes);
+			setPrefixes(session.getPrefixes());
+		}
+		else {
+			session.setBaseUrl(baseUrl);
+		}
+		//Commit once all the inital data has been written
+		session.commit();
 		QueueURL u;
 		//Main loop which repeatedly pulls a new url from the queue and visits it
-		while((u=urls.poll())!=null){
+		while((u=session.getNextUrl())!=null){
 			try{
 				parseUrls(u);
 			}
@@ -173,13 +183,16 @@ public class SeleniumScraper {
 			}
 		}
 		
-		for(String ul : visited){
+		for(String ul : session.getVisitedUrls()){
+			System.out.println(ul);
 			out.write(ul+"\n");
 		}
 		out.close();
 		client.close();
-		
+		session.delete();
 	}
+	
+	
 	/**
 	 * Gets the final url of a given url after redirects
 	 * @param URL url to check
@@ -209,8 +222,9 @@ public class SeleniumScraper {
 	 * Main function that visits a given page, scrapes all the urls and processes them
 	 * @param url Url to visit
 	 * @throws IOException
+	 * @throws SQLException 
 	 */
-	private void parseUrls(QueueURL url) throws IOException{
+	private void parseUrls(QueueURL url) throws IOException, SQLException{
 		client.getWebDriver().get(url.url);
 		try {
 			//another sleep to try and wait through strange redirects not done using code 302 re:rbc.com
@@ -223,13 +237,13 @@ public class SeleniumScraper {
 		//skip page if it is not valid
 		if(!checkURL(finalURL)) return;
 		//skip page if was already visited/checked
-		if(visited.contains(finalURL)) return;
+		if(session.hasVisited(finalURL)) return;
 		if(finalURL.equals(baseUrl)){
 			finalURL = finalURL+"/";
 		}
-		System.out.println(finalURL+" "+urls.size()+" left");
+		System.out.println(finalURL+" "+session.getQueueSize()+" left");
 		//Add to the visited set which tracks all the urls found by the scraper
-		visited.add(finalURL);
+		session.addVisited(new QueueURL(finalURL, url.depth));
 		//skip scraping for more urls if it's at the max depth
 		if(url.depth>=maxDepth) return;
 		//Get the page body
@@ -253,11 +267,13 @@ public class SeleniumScraper {
 				}
 			}
 			//Add the url to the queue if it was not seen before
-			if(checkURL(u)&&!seen.contains(u)){
-				seen.add(u);
-				urls.offer(new QueueURL(u, url.depth+1));
+			if(checkURL(u)&&!session.hasSeen(u)){
+				session.addSeen(u);
+				session.offerUrl(new QueueURL(u, url.depth+1));
 			}
 		}
+		//commit after each page is fully scraped and processed before the timeout starts
+		session.commit();
 		try {
 			Thread.sleep(timeout);
 		} catch (InterruptedException e1) {}
@@ -285,26 +301,6 @@ public class SeleniumScraper {
 		if(url.startsWith(URLDecoder.decode(baseUrl,StandardCharsets.UTF_8))) return true;
 		return false;
 		
-	}
-	/**
-	 * Class for the urls in the queue, with a depth parameter to track depth of urls crawled
-	 * and stop once the max-depth is reached.
-	 * @author Allen
-	 *
-	 */
-	private static class QueueURL{
-		public String url;
-		//Tracks the depth of the url, or the minimum number of links you need to click to get to the page
-		//from the base url page. 0 for the baseUrl
-		public int depth;
-		//public String prevUrl;
-		public QueueURL(String url, int depth){
-			this.url = url;
-			this.depth = depth;
-		}
-		public String toString(){
-			return url;
-		}
 	}
 
 }

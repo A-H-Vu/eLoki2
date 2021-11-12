@@ -214,6 +214,10 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                     content: `getPage `+ifrm.contentWindow.location,
                     t: new Date()
                 })
+                ticks.push({
+                    content: `attachMouse`,
+                    t: new Date()
+                })
             // }
             d = new Date()
             // theInterval = setInterval(() => {
