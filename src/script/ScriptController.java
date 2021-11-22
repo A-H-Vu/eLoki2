@@ -60,7 +60,7 @@ public class ScriptController {
 	 * an optional @###### which marks the timestamp of the line
 	 * and then the action itself
 	 */
-	Pattern parsePattern = Pattern.compile("(?:(@[0-9]+) )?(.*)");
+	Pattern parsePattern = Pattern.compile("(?:(@[0-9]+) )?(.+)");
 	Matcher parseMatcher = parsePattern.matcher("");
 	
 	/**
@@ -71,6 +71,7 @@ public class ScriptController {
 		parseMatcher.reset(line);
 		if(!parseMatcher.matches()) {
 			System.err.println("Error parsing format for "+line+", skipping");
+			return;
 		}
 		
 		String action = parseMatcher.group(2).split(" ")[0];

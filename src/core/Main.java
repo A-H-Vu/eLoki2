@@ -147,6 +147,10 @@ public class Main {
 
 				}
 				else if(clientName.equalsIgnoreCase("SeleniumFirefox")) {
+					if(res.getString("driver")==null) {
+						System.err.println("The GeckoDriver must be set using the --driver argument");
+						System.exit(1);
+					}
 					System.setProperty("webdriver.gecko.driver", res.getString("driver"));
 					client = new SeleniumFirefox();
 				}
