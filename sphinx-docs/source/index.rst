@@ -6,6 +6,9 @@
 Welcome to eLoki2's documentation!
 ==================================
 
+Eloki2 can be downloaded from the github release page `here <https://github.com/chenc118/eLoki2/releases/tag/0.2.4>`_
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -20,10 +23,10 @@ Welcome to eLoki2's documentation!
 
 
 
-Indices and tables
-==================
+.. Indices and tables
+.. ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`
 
