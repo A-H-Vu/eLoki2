@@ -7,12 +7,13 @@ The scraper module of the program scrapes a site looking for all the pages that 
 
 If the page www.foo.com/home/index.html links to three pages www.foo.com/res/a.html, www.foo.com/home/about.html, www.foo.com/home/a.png, the scraper will only return www.foo.com/home/about.html. As a.png is an image and not an html/text page, and the other page is is not prefixed by "www.foo.com/home/"
 
-
+The scraper can  be paused by terminating the program and restarted by using the same command as long as the ``inprogressScrape.db`` file is in the working directory.
 
 Usage
 *****
 
 .. code-block:: console 
+
     java -jar eLoki2.jar [--full-browser] [--driver DRIVERFILE] [--client CLIENT] [--proxy address:port] scrape \<url\> [--timeout TIMEOUT] [--max-depth DEPTH] [--dest FILE]
 
 <url\> The url argument is the address to the page to scrape for example www.yorku.ca
@@ -23,6 +24,8 @@ Output
 ******
 
 The urls found will be written to the file specified by the ``--dest`` argument. If the ``--dest`` argument is not used then it will be written to a file named ``anchors``
+
+While scraping a site a sqlite database file ``inprogressScrape.db`` will be created to store the data about the ongoing scrape. For details on the tables in the database see :ref:`scrape_database_fmt`. 
 
 .. note::
     The current implementation of the scraper uses Selenium in order to avoid issues with site using javascript, html meta tags, etc to load, render or redirect  pages. As such the options ``--driver`` and ``--client`` must be set.

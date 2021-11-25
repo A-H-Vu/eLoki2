@@ -210,6 +210,7 @@ The scraper extracts the urls using the RemoteWebElement class in Selenium, some
 Lines 192-205 contain some checks to make sure that it is a valid url. Lies 192-200 use the same trick by initializing a URL object to check that it is a full url, if it fails the initial check then the url is assumed to be relative to the current page. Lines 202-205 checks the url against the database of all urls seen by the scraper and with the prefix filters before adding it to the queue of urls to process.
 
 
+.. _scrape_database_fmt :
 
 DataBase Format
 ---------------
