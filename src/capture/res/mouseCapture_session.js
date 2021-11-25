@@ -33,6 +33,33 @@ function onUnload(){
     window.sessionStorage.setItem(tickName,get_ticks())
 }
 
+//https://stackoverflow.com/a/12222317 gets css selector for element
+var cssPath = function(el) {
+    if (!(el instanceof Element)) 
+        return;
+    var path = [];
+    while (el.nodeType === Node.ELEMENT_NODE) {
+        var selector = el.nodeName.toLowerCase();
+        if (el.id) {
+            selector += '#' + el.id;
+            path.unshift(selector);
+            break;
+        } else {
+            var sib = el, nth = 1;
+            while (sib = sib.previousElementSibling) {
+                if (sib.nodeName.toLowerCase() == selector)
+                   nth++;
+            }
+            if (nth != 1)
+                selector += ":nth-of-type("+nth+")";
+        }
+        path.unshift(selector);
+        el = el.parentNode;
+    }
+    return path.join(" > ");
+ }
+
+
 //stores the recorded actions
 var ticks = [];
 
@@ -86,32 +113,50 @@ function init() {
             content: `attachMouse`,
             t: new Date()
         })
-        doc.onmousemove = event => {
-            if(capturing) {
-                ticks.push({
-                    content: `mouseMoveScroll ${event.x} ${event.y} ${window.pageXOffset} ${window.pageYOffset}`,
-                    t: new Date()
-                });
-            }
-        };
-
-        doc.onclick = event => {
+        //listeners for all events
+        ifrmDoc.addEventListener('mousemove', event => {
             if (capturing) {
                 ticks.push({
-                    content: `click`,
+                    content: `mouseMoveScroll ${event.x} ${event.y} ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
                     t: new Date()
                 });
             }
-        };
+        });
+        ifrmDoc.addEventListener('click', event => {
+            if (capturing) {
+                event = event || window.event;
+                var target = event.target || event.srcElement
+                ticks.push({
+                    content: `click ${cssPath(event)}`,
+                    t: new Date()
+                });
+            }
+        });
 
-        doc.oncontextmenu = event => {
+        ifrmDoc.addEventListener('contextmenu', event => {
             if (capturing) {
                 ticks.push({
                     content: `right_click`,
                     t: new Date()
                 });
             }
-        };
+        });
+        //second key listener this time on the iframe
+        //Both will not be triggered at the same time
+        ifrmDoc.body.addEventListener('keydown', event => {
+            console.log('keydown');
+            if (event.ctrlKey) {
+                toggleCapturing(ifrmDoc);
+            }
+        });
+        ifrmDoc.body.addEventListener('scroll', event =>{
+            if(capturing) {
+                ticks.push({
+                    content: `scrollWindow ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
+                    t: new Date()
+                })
+            }
+        });
 
         window.onbeforeunload = onUnload
 

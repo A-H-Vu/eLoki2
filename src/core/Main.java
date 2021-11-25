@@ -38,7 +38,6 @@ public class Main {
 	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException, SQLException {
-		
 		//Argument parser section sets up the parameters for argparse4j
 		//Main parser which parses the main arguments
 		ArgumentParser parser = ArgumentParsers.newFor("eloki2").build()

@@ -110,9 +110,9 @@ public class MouseCapture {
 				continue;
 			}
 
-			//Wait for the page to fully load
+			//Wait for the page to start loading
 			wait.until((ExpectedCondition<Boolean>) wd -> {
-				return ((Boolean)((JavascriptExecutor)wd).executeScript("return document.readyState == 'complete';"));
+				return ((Boolean)((JavascriptExecutor)wd).executeScript("return (document.readyState == 'loading') || (document.readyState == 'complete');"));
 			});
 
 			//Inject the javascript which will clear the page and embed it in an iframe along with a control bar on the top
@@ -184,26 +184,33 @@ public class MouseCapture {
 			//Hot loop to check if the current url has changed
 			while(true){
 				if(!webdriver.getCurrentUrl().equals(currentURL)){
-					//If the user is returning to the main page from stopping the recording, inject main page script
-					//and save recording data to ticks key in the session storage
-					if(webdriver.getCurrentUrl().equals("about:blank")) {
-						browser.awaitPageLoad(1000);
-						jsExec.executeScript(mainPage, sb.toString());
-						sb = new StringBuilder();
-						webStorage.getSessionStorage().setItem("ticks", sb.toString());
-						break;
+					try {
+						//If the user is returning to the main page from stopping the recording, inject main page script
+						//and save recording data to ticks key in the session storage
+						if(webdriver.getCurrentUrl().equals("about:blank")) {
+							browser.awaitPageLoad(1000);
+							jsExec.executeScript(mainPage, sb.toString());
+							sb = new StringBuilder();
+							//try and avoid error from session storage being blocked from previous page
+							browser.awaitPageLoad(500);
+							webStorage.getSessionStorage().setItem("ticks", sb.toString());
+							break;
+						}
+						//Save the recorded data from the previous page
+						System.out.println("Saving data from page "+currentURL);
+						String data = webStorage.getSessionStorage().getItem(tempName);
+						if(data!=null&&!data.equals("null")) {
+							sb.append(data);
+						}
+						else {
+							System.out.println("Null Data");
+						}
+						//remove the item from session storage to avoid takign up too much space
+						webStorage.getSessionStorage().removeItem(tempName);
+					}catch(Exception e) {
+						System.err.println("Error while handling page change");
+						e.printStackTrace();
 					}
-					//Save the recorded data from the previous page
-					System.out.println("Saving data from page "+currentURL);
-					String data = webStorage.getSessionStorage().getItem(tempName);
-					if(data!=null&&!data.equals("null")) {
-						sb.append(data);
-					}
-					else {
-						System.out.println("Null Data");
-					}
-					//remove the item from session storage to avoid takign up too much space
-					webStorage.getSessionStorage().removeItem(tempName);
 					continue mainloop;
 				}
 				if(webdriver.getCurrentUrl().equals("about:blank")) {

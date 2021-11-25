@@ -11,6 +11,18 @@
 //Additionally with this method the recorded session window can be larger than the browser window/display
 //as the iframe can be sized independantly from the browser
 
+
+//Temporary thing for clicking an element by its css tag
+//attempts to bubble up the tree till it finds something clickable
+//testing tbd
+function clickByCSS(css){
+    var ele = document.querySelector(css)
+    while(typeof(ele.click)==='undefined'){
+        ele = ele.parentNode
+    }
+    ele.click()
+}
+
 //function that is called when the iframe's url changes
 //executes the callback function once the url has changed 
 function iframeURLChange(iframe, callback) {
@@ -49,6 +61,32 @@ function iframeURLChange(iframe, callback) {
 
     attachUnload();
 }
+
+//https://stackoverflow.com/a/12222317 gets css selector for element
+var cssPath = function(el) {
+    if (!(el instanceof Element)) 
+        return;
+    var path = [];
+    while (el.nodeType === Node.ELEMENT_NODE) {
+        var selector = el.nodeName.toLowerCase();
+        if (el.id) {
+            selector += '#' + el.id;
+            path.unshift(selector);
+            break;
+        } else {
+            var sib = el, nth = 1;
+            while (sib = sib.previousElementSibling) {
+                if (sib.nodeName.toLowerCase() == selector)
+                   nth++;
+            }
+            if (nth != 1)
+                selector += ":nth-of-type("+nth+")";
+        }
+        path.unshift(selector);
+        el = el.parentNode;
+    }
+    return path.join(" > ");
+ }
 
 
 //stores the recording
@@ -184,9 +222,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         if (capturing) {
             //update background
             body.style.backgroundColor = 'white';
-            //remove listeners
-            ifrmDoc.onmousemove = null;
-            ifrmDoc.onclick = null;
+            //TODO remove new event listeners if they work
             //clearInterval(theInterval);
             //renable buttons
             printButton.disabled = false;
@@ -253,14 +289,14 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     });
 
     //Key listener on the main document 
-    document.body.onkeydown = event => {
+    document.body.addEventListener('keydown', event => {
         if (event.ctrlKey) {
             toggleCapturing(ifrm.contentWindow.document);
         }
-    }
+    });
 
     //Main function that registers all the listeners
-    ifrm.onload = () => {
+    ifrm.addEventListener('load', () => {
         var ifrmDoc = ifrm.contentWindow.document;
         // ticks.push({
         //     content: ifrmDoc.readyState,
@@ -273,53 +309,54 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         }
 
         //listeners for all events
-
-        ifrmDoc.onmousemove = event => {
+        ifrmDoc.addEventListener('mousemove', event => {
             if (capturing) {
                 ticks.push({
                     content: `mouseMoveScroll ${event.x} ${event.y} ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
                     t: new Date()
                 });
             }
-        };
-
-        ifrmDoc.onclick = event => {
+        });
+        ifrmDoc.addEventListener('click', event => {
             if (capturing) {
+                event = event || window.event;
+                var target = event.target || event.srcElement
                 ticks.push({
-                    content: `click`,
+                    content: `click ${cssPath(event)}`,
                     t: new Date()
                 });
             }
-        };
+        });
 
-        ifrmDoc.oncontextmenu = event => {
+        ifrmDoc.addEventListener('contextmenu', event => {
             if (capturing) {
                 ticks.push({
                     content: `right_click`,
                     t: new Date()
                 });
             }
-        };
+        });
         //second key listener this time on the iframe
         //Both will not be triggered at the same time
-        ifrmDoc.body.onkeydown = event => {
+        ifrmDoc.body.addEventListener('keydown', event => {
+            console.log('keydown');
             if (event.ctrlKey) {
                 toggleCapturing(ifrmDoc);
             }
-        }
-        ifrmDoc.body.onscroll = event =>{
+        });
+        ifrmDoc.body.addEventListener('scroll', event =>{
             if(capturing) {
                 ticks.push({
                     content: `scrollWindow ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
                     t: new Date()
                 })
             }
-        }
+        });
         
         
         ifrmDoc.body.focus()
 
-    };
+    });
 
 }
 

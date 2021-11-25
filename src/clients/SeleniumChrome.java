@@ -18,6 +18,8 @@ public class SeleniumChrome extends SeleniumClient {
 		//Allow alerts to be displayed to the user without needing them to be handled by Selenium
 		//Used by the mouseCapture scripts
 		options = new ChromeOptions();
+		//Disable CORS as the injected scripts tend to be communicating from different sources
+		options.addArguments("--disable-web-security");
 		options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 	}
 	
