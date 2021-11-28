@@ -6,7 +6,7 @@
 Welcome to eLoki2's documentation!
 ==================================
 
-Eloki2 can be downloaded from the github release page `here <https://github.com/chenc118/eLoki2/releases/tag/0.2.4>`_
+Eloki2 can be downloaded from the github release page `here <https://github.com/chenc118/eLoki2/releases/tag/0.2.5>`_
 
 
 .. toctree::
