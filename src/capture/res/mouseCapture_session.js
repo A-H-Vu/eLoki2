@@ -126,8 +126,11 @@ function init() {
             if (capturing) {
                 event = event || window.event;
                 var target = event.target || event.srcElement
+                cssp = cssPath(target);
+                if(typeof(cssp)==='undefined')
+                    cssp = "";
                 ticks.push({
-                    content: `click ${cssPath(event)}`,
+                    content: `click ${cssp}`,
                     t: new Date()
                 });
             }

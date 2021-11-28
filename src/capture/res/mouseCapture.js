@@ -64,8 +64,6 @@ function iframeURLChange(iframe, callback) {
 
 //https://stackoverflow.com/a/12222317 gets css selector for element
 var cssPath = function(el) {
-    if (!(el instanceof Element)) 
-        return;
     var path = [];
     while (el.nodeType === Node.ELEMENT_NODE) {
         var selector = el.nodeName.toLowerCase();
@@ -118,6 +116,20 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     var div = document.createElement('div');
     div.style = "all: initial; * {all: unset;}"
     div.style.display = 'flex';
+
+    var stopResumeButton = document.createElement('button');
+    stopResumeButton.onclick = ()=>{
+        toggleCapturing()
+        if(capturing){
+            stopResumeButton.innerText = "Pause";
+        }
+        else{
+            stopResumeButton.innerText = "Resume"
+        }
+    };
+    stopResumeButton.innerText = "Start";
+    stopResumeButton.style = buttonStyle;
+    div.appendChild(stopResumeButton);
     
     var printButton = document.createElement('button');
     printButton.onclick = print_ticks;
@@ -157,7 +169,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
 
     var restartButton = document.createElement('button');
     restartButton.setAttribute("onclick", "br()");
-    restartButton.innerText = "Record another Site";
+    restartButton.innerText = "New Recording";
     restartButton.style = buttonStyle;
     div.appendChild(restartButton);
     
@@ -217,7 +229,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     })
 
     //Turns the recording on/off, capturing = true = recording
-    function toggleCapturing(ifrmDoc) {
+    function toggleCapturing() {
         console.log("toggle");
         if (capturing) {
             //update background
@@ -279,7 +291,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         console.log("iFrame is on " + newURL);
         if (capturing) {
             //push wait for page load event
-            toggleCapturing(ifrm.contentWindow.document);
+            toggleCapturing();
             ticks.push({
                 content: `waiting`,
                 t: new Date()
@@ -291,7 +303,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     //Key listener on the main document 
     document.body.addEventListener('keydown', event => {
         if (event.ctrlKey) {
-            toggleCapturing(ifrm.contentWindow.document);
+            toggleCapturing();
         }
     });
 
@@ -304,7 +316,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         // });
         //if url has changed, re-enable recording as page has loaded
         if (waiting) {
-            toggleCapturing(ifrmDoc);
+            toggleCapturing();
             waiting = false;
         }
 
@@ -321,8 +333,11 @@ function init(ifHeight = 1200, ifWidth = 1920) {
             if (capturing) {
                 event = event || window.event;
                 var target = event.target || event.srcElement
+                cssp = cssPath(target);
+                if(typeof(cssp)==='undefined')
+                    cssp = "";
                 ticks.push({
-                    content: `click ${cssPath(event)}`,
+                    content: `click ${cssp}`,
                     t: new Date()
                 });
             }

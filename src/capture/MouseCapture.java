@@ -129,7 +129,7 @@ public class MouseCapture {
 			currentURL = webdriver.getCurrentUrl();
 			String state;
 			while(true){
-				state = ((String)((JavascriptExecutor)webdriver).executeScript("if(typeof state !== 'undefined'){console.log(state); return state;}return 'active'"));
+				state = ((String)((JavascriptExecutor)webdriver).executeScript("if(typeof state !== 'undefined'){return state;}return 'active'"));
 				if(!webdriver.getCurrentUrl().equals(currentURL)){
 					state = "reset";
 					break;
