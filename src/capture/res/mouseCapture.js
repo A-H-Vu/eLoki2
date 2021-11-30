@@ -120,12 +120,6 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     var stopResumeButton = document.createElement('button');
     stopResumeButton.onclick = ()=>{
         toggleCapturing()
-        if(capturing){
-            stopResumeButton.innerText = "Pause";
-        }
-        else{
-            stopResumeButton.innerText = "Resume"
-        }
     };
     stopResumeButton.innerText = "Start";
     stopResumeButton.style = buttonStyle;
@@ -234,6 +228,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         if (capturing) {
             //update background
             body.style.backgroundColor = 'white';
+            stopResumeButton.innerText = "Resume"
             //TODO remove new event listeners if they work
             //clearInterval(theInterval);
             //renable buttons
@@ -250,6 +245,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         } else {
             //update background
             body.style.backgroundColor = 'red';
+            stopResumeButton.innerText = "Pause";
             // ticks.push({
             //     content: `started`,
             //     t: new Date()
@@ -357,6 +353,12 @@ function init(ifHeight = 1200, ifWidth = 1920) {
             console.log('keydown');
             if (event.ctrlKey) {
                 toggleCapturing(ifrmDoc);
+            }
+            else if(capturing){
+                ticks.push({
+                    content: `keyStroke ${event.key}`,
+                    t: new Date()
+                })
             }
         });
         ifrmDoc.body.addEventListener('scroll', event =>{

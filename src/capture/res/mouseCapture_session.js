@@ -17,6 +17,7 @@ if(arguments.length>0){
 }
 
 
+
 //A check to see if the url change was done via js or something, page has not actually unloaded
 //Function checks if an attribute named elokiSessionName is set, stores the random alphanumeric string
 //which the script saves the reccordings to 
@@ -160,6 +161,14 @@ function init() {
                 })
             }
         });
+        ifrmDoc.body.addEventListener('keypress', event => {
+            if(capturing){
+                ticks.push({
+                    content: `keyStroke ${event.key}`,
+                    t: new Date()
+                })
+            }
+        });
 
         window.onbeforeunload = onUnload
 
@@ -186,6 +195,28 @@ function init() {
         window.addEventListener("blur", checkFocus);
         //start capturing once all listeners have been registered
         toggleCapturing(doc)
+
+
+        //canvas to draw a red dot, to signal recording
+        var canvas = document.createElement('canvas');
+        canvas.height = 64;
+        canvas.width = 64
+        var ctx = canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.arc(32, 32, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = 'red'
+        ctx.fill();
+        document.head.appendChild(canvas)
+
+
+        //Change favicon to recording icon
+        var link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+        link.href = canvas.toDataURL();
     }
 
 

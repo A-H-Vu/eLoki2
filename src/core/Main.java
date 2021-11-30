@@ -118,6 +118,7 @@ public class Main {
 		defaultController.addAction("scrollWindow", ScrollWindow.class);
 		defaultController.addAction("attachMouse", AttachMouse.class);
 		defaultController.addAction("resize", ResizeWindow.class);
+		defaultController.addAction("keyStroke", KeyStroke.class);
 		
 		
 		try {
