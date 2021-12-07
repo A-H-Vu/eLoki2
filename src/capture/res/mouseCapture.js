@@ -218,7 +218,6 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     var capturing = false;
     var waiting = false;
     var mousePos;
-    //var theInterval;
     //for initial load, record window size
     ticks.push({
         content: `resize ${ifWidth} ${ifHeight}`,
@@ -232,8 +231,6 @@ function init(ifHeight = 1200, ifWidth = 1920) {
             //update background
             body.style.backgroundColor = 'white';
             stopResumeButton.innerText = "Resume"
-            //TODO remove new event listeners if they work
-            //clearInterval(theInterval);
             //renable buttons
             printButton.disabled = false;
             downloadButton.disabled = false;
@@ -267,12 +264,6 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                 })
             // }
             d = new Date()
-            // theInterval = setInterval(() => {
-            //     //For some reason this appears to start running prior to toggle capturing being pressed
-            //     //Prevents mouse pos recordings from before the start of the current run from being recorded
-            //     if (!!mousePos&&mousePos.t>d)
-            //         ticks.push(mousePos);
-            // }, 1);
             printButton.disabled = true;
             downloadButton.disabled = true;
         }
@@ -291,10 +282,6 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         if (capturing) {
             //push wait for page load event
             toggleCapturing();
-            ticks.push({
-                content: `waiting`,
-                t: new Date()
-            });
             waiting = true;
         }
     });
@@ -309,15 +296,37 @@ function init(ifHeight = 1200, ifWidth = 1920) {
     //Main function that registers all the listeners
     ifrm.addEventListener('load', () => {
         var ifrmDoc = ifrm.contentWindow.document;
-        // ticks.push({
-        //     content: ifrmDoc.readyState,
-        //     t: new Date()
-        // });
         //if url has changed, re-enable recording as page has loaded
         if (waiting) {
+            ticks.push({
+                content: `waiting`,
+                t: new Date()
+            });
             toggleCapturing();
             waiting = false;
         }
+        currentIframeURL = ifrm.contentWindow.location.href;
+        var testURL = function() {
+            var newHref = null;
+            if (ifrm.contentWindow !== null)
+                newHref = ifrm.contentWindow.location.href;
+
+            if (newHref !== currentIframeURL) {
+                ticks.push({
+                    content: `getPage `+ifrm.contentWindow.location,
+                    t: new Date()
+                });
+                ticks.push({
+                    content: `waiting`,
+                    t: new Date()
+                });
+                ticks.push({
+                    content: `attachMouse`,
+                    t: new Date()
+                });
+
+            }
+        };
 
         //listeners for all events
         ifrmDoc.addEventListener('mousemove', event => {
@@ -339,6 +348,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                     content: `click ${cssp}`,
                     t: new Date()
                 });
+                testURL();
             }
         });
 
@@ -348,6 +358,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                     content: `right_click`,
                     t: new Date()
                 });
+                testURL();
             }
         });
         //second key listener this time on the iframe
@@ -362,8 +373,11 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                     content: `keyStroke ${event.key}`,
                     t: new Date()
                 })
+                testURL();
             }
         });
+
+        //TODO figure out why this doesn't work
         ifrmDoc.body.addEventListener('scroll', event =>{
             if(capturing) {
                 ticks.push({

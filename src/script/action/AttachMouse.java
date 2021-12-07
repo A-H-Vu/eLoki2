@@ -21,6 +21,7 @@ public class AttachMouse extends Action{
 			SeleniumClient sClient = (SeleniumClient) client;
 			//Function copied from stackoverflow that simply puts an image of a mouse at the cursor's location
 			sClient.getJSExecutor().executeScript("function enableCursor() {\n"
+					+ "  if(document.querySelector(\"#selenium_mouse_follower\")!==null) return;"
 					+ "  var seleniumFollowerImg = document.createElement(\"img\");\n"
 					+ "  seleniumFollowerImg.setAttribute('src', 'data:image/png;base64,'\n"
 					+ "    + 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAQAAACGG/bgAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAA'\n"
