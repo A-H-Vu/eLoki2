@@ -5,14 +5,15 @@ import org.openqa.selenium.interactions.Actions;
 import clients.Client;
 import clients.SeleniumClient;
 
-public class KeyStroke extends Action {
-	private String keys = "";
-	public KeyStroke(String raw) {
+public class KeyUp extends Action {
+	private String keys;
+	public KeyUp(String raw) {
 		super(raw);
 		int space = raw.indexOf(' ');
 		if(space>0) {
 			keys = raw.substring(space+1);
 		}
+		
 	}
 
 	@Override
@@ -26,7 +27,7 @@ public class KeyStroke extends Action {
 			}catch(IllegalArgumentException e) {}
 			SeleniumClient sClient = (SeleniumClient) client;
 			Actions action = new Actions(sClient.getWebDriver());
-			action.sendKeys(keys);
+			action.keyUp(keys);
 			action.build().perform();
 		}
 		return super.getNextAction();

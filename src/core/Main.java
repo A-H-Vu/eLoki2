@@ -119,6 +119,8 @@ public class Main {
 		defaultController.addAction("attachMouse", AttachMouse.class);
 		defaultController.addAction("resize", ResizeWindow.class);
 		defaultController.addAction("keyStroke", KeyStroke.class);
+		defaultController.addAction("keyDown", KeyDown.class);
+		defaultController.addAction("keyUp", KeyUp.class);
 		
 		
 		try {
@@ -186,7 +188,7 @@ public class Main {
 						Action initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
 						defaultController.runScript(initial, client);
 					} catch (IOException e) {
-						System.err.println("Error reading script "+res.getString("script"));
+						System.err.println("Error reading script "+s);
 						System.err.println(e.getMessage());
 					}
 				}
