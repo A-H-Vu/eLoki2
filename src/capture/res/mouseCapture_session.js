@@ -115,7 +115,7 @@ function init() {
             t: new Date()
         })
         //listeners for all events
-        ifrmDoc.addEventListener('mousemove', event => {
+        doc.addEventListener('mousemove', event => {
             if (capturing) {
                 ticks.push({
                     content: `mouseMoveScroll ${event.x} ${event.y} ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
@@ -123,7 +123,7 @@ function init() {
                 });
             }
         });
-        ifrmDoc.addEventListener('click', event => {
+        doc.addEventListener('click', event => {
             if (capturing) {
                 event = event || window.event;
                 var target = event.target || event.srcElement
@@ -137,7 +137,7 @@ function init() {
             }
         });
 
-        ifrmDoc.addEventListener('contextmenu', event => {
+        doc.addEventListener('contextmenu', event => {
             if (capturing) {
                 ticks.push({
                     content: `right_click`,
@@ -147,13 +147,13 @@ function init() {
         });
         //second key listener this time on the iframe
         //Both will not be triggered at the same time
-        ifrmDoc.body.addEventListener('keydown', event => {
+        doc.addEventListener('keydown', event => {
             console.log('keydown');
             if (event.ctrlKey) {
-                toggleCapturing(ifrmDoc);
+                toggleCapturing(doc);
             }
         });
-        ifrmDoc.body.addEventListener('scroll', event =>{
+        doc.addEventListener('scroll', event =>{
             if(capturing) {
                 ticks.push({
                     content: `scrollWindow ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
@@ -161,12 +161,12 @@ function init() {
                 })
             }
         });
-        ifrmDoc.body.addEventListener('keypress', event => {
+        doc.addEventListener('keypress', event => {
             if(capturing){
                 ticks.push({
                     content: `keyStroke ${event.key}`,
                     t: new Date()
-                })
+                });
             }
         });
 

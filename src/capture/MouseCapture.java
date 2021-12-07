@@ -179,23 +179,13 @@ public class MouseCapture {
 			//The javascript injected will automatically write everything recorded to the session storage when it is unloaded
 			//by the page chaning
 			String tempName = genRandom(10);
+			
 			tempName = (String)jsExec.executeScript(js, tempName);
 			String currentURL = webdriver.getCurrentUrl();
 			//Hot loop to check if the current url has changed
 			while(true){
 				if(!webdriver.getCurrentUrl().equals(currentURL)){
 					try {
-						//If the user is returning to the main page from stopping the recording, inject main page script
-						//and save recording data to ticks key in the session storage
-						if(webdriver.getCurrentUrl().equals("about:blank")) {
-							browser.awaitPageLoad(1000);
-							jsExec.executeScript(mainPage, sb.toString());
-							sb = new StringBuilder();
-							//try and avoid error from session storage being blocked from previous page
-							browser.awaitPageLoad(500);
-							webStorage.getSessionStorage().setItem("ticks", sb.toString());
-							break;
-						}
 						//Save the recorded data from the previous page
 						System.out.println("Saving data from page "+currentURL);
 						String data = webStorage.getSessionStorage().getItem(tempName);
@@ -207,6 +197,17 @@ public class MouseCapture {
 						}
 						//remove the item from session storage to avoid takign up too much space
 						webStorage.getSessionStorage().removeItem(tempName);
+						//If the user is returning to the main page from stopping the recording, inject main page script
+						//and save recording data to ticks key in the session storage
+						if(webdriver.getCurrentUrl().equals("about:blank")) {
+							browser.awaitPageLoad(1000);
+							jsExec.executeScript(mainPage, sb.toString());
+							sb = new StringBuilder();
+							//try and avoid error from session storage being blocked from previous page?
+							browser.awaitPageLoad(500);
+							webStorage.getSessionStorage().setItem("ticks", sb.toString());
+							break;
+						}
 					}catch(Exception e) {
 						System.err.println("Error while handling page change");
 						e.printStackTrace();

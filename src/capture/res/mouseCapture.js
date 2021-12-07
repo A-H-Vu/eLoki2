@@ -61,6 +61,9 @@ function iframeURLChange(iframe, callback) {
 
     attachUnload();
 }
+//test link capture
+//fix bbc and cbc
+
 
 //https://stackoverflow.com/a/12222317 gets css selector for element
 var cssPath = function(el) {
@@ -350,7 +353,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         //second key listener this time on the iframe
         //Both will not be triggered at the same time
         ifrmDoc.body.addEventListener('keydown', event => {
-            console.log('keydown');
+            console.log('keydown'+event.code+' '+event.key);
             if (event.ctrlKey) {
                 toggleCapturing(ifrmDoc);
             }
