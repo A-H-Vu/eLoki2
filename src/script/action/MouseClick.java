@@ -30,15 +30,23 @@ public class MouseClick extends Action {
 	public Action execute(Client client) {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
-			if(css.equals("")) {
+			boolean clicked = false;
+			if(!css.equals("")) {
+				try {
+					//click using the css selector
+					sClient.getWebDriver().findElement(By.cssSelector(css)).click();
+					clicked = true;
+					//if there is an error with the selector etc
+				}catch(Exception e) {
+					clicked = false;
+				}
+			}
+			//default path, just clicks the mouse at the curren tpoint
+			if(!clicked) {
 				Actions action = new Actions(sClient.getWebDriver());
 				action.tick(sClient.getPointerInput().createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 				action.tick(sClient.getPointerInput().createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 				action.perform();
-			}
-			else {
-				//click using the css selector
-				sClient.getWebDriver().findElement(By.cssSelector(css)).click();
 			}
 		}
 			
