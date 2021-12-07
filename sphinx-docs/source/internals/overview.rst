@@ -27,3 +27,4 @@ The following topics cover some of the interals of ELoki2 and how it works. They
    scraping
    runscript
    capture
+   script
