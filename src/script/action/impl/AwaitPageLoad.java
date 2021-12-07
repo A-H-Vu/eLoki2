@@ -1,4 +1,4 @@
-package script.action;
+package script.action.impl;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -6,6 +6,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import clients.Client;
 import clients.SeleniumClient;
+import script.action.Action;
+import script.action.ActionCompatibility;
+import script.action.ActionTick;
 
 /**
  * Action that waits for the page to load checking for document.readyState === "complete

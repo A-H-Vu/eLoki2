@@ -1,9 +1,11 @@
-package script.action;
+package script.action.impl;
 
 import org.openqa.selenium.Dimension;
 
 import clients.Client;
 import clients.SeleniumClient;
+import script.action.Action;
+import script.action.ActionCompatibility;
 
 /**
  * Resizes the window to the given width and height

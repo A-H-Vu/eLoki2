@@ -1,4 +1,4 @@
-package script.action;
+package script.action.impl;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -6,6 +6,9 @@ import java.text.ParseException;
 
 import clients.Client;
 import clients.SeleniumClient;
+import script.action.Action;
+import script.action.ActionCompatibility;
+import script.action.ActionTick;
 
 /**
  * Action that navigates the browser to a specific page

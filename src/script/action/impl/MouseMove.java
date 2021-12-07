@@ -1,21 +1,32 @@
-package script.action;
+package script.action.impl;
+
+import java.time.Duration;
 
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
 
 import clients.Client;
 import clients.SeleniumClient;
+import script.action.Action;
+import script.action.ActionCompatibility;
+import script.action.ActionTick;
 
 /**
- * Action that executes a mouse right click at the current location
+ * An action that moves the mouse to the given x, y location
  * @author Allen
  *
  */
-public class MouseRightClick extends Action {
+public class MouseMove extends Action {
 
-	public MouseRightClick(String raw) {
+	// co-ordinates to move to
+	private int x;
+	private int y;
+
+	public MouseMove(String raw) {
 		super(raw);
-		// TODO Auto-generated constructor stub
+		String[] args = raw.split(" ");
+		x = Integer.parseInt(args[1]);
+		y = Integer.parseInt(args[2]);
 	}
 
 	@Override
@@ -23,8 +34,8 @@ public class MouseRightClick extends Action {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
 			Actions action = new Actions(sClient.getWebDriver());
-			action.tick(sClient.getPointerInput().createPointerDown(PointerInput.MouseButton.RIGHT.asArg()));
-			action.tick(sClient.getPointerInput().createPointerUp(PointerInput.MouseButton.RIGHT.asArg()));
+			action.tick(sClient.getPointerInput().createPointerMove(Duration.ofMillis(1),
+					PointerInput.Origin.viewport(), x, y));
 			action.perform();
 		}
 		return super.next;
@@ -40,7 +51,7 @@ public class MouseRightClick extends Action {
 	
 	@Override
 	protected ActionTick.Response actionTickResponse() {
-		return ActionTick.Response.UseTick;
+		return ActionTick.Response.Skippable;
 	}
 
 }

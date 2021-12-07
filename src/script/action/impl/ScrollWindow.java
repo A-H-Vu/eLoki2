@@ -1,7 +1,10 @@
-package script.action;
+package script.action.impl;
 
 import clients.Client;
 import clients.SeleniumClient;
+import script.action.Action;
+import script.action.ActionCompatibility;
+import script.action.ActionTick;
 
 /**
  * Scrolls the main document window to the given scrollX and scrollY values

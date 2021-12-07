@@ -1,9 +1,13 @@
-package script.action;
+package script.action.impl;
 
 import org.openqa.selenium.interactions.Actions;
 
 import clients.Client;
 import clients.SeleniumClient;
+import script.action.Action;
+import script.action.ActionCompatibility;
+import script.action.ActionTick;
+import script.action.SeleniumKeyMapping;
 
 public class KeyUp extends Action {
 	private String keys;

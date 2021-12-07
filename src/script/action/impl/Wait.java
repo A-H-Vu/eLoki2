@@ -1,6 +1,8 @@
-package script.action;
+package script.action.impl;
 
 import clients.Client;
+import script.action.Action;
+import script.action.ActionCompatibility;
 
 public class Wait extends Action {
 	int delay = 0;

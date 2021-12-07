@@ -1,7 +1,9 @@
-package script.action;
+package script.action.impl;
 
 import clients.Client;
 import clients.SeleniumClient;
+import script.action.Action;
+import script.action.ActionCompatibility;
 
 /**
  * Action used to show the position of the mouse visually.

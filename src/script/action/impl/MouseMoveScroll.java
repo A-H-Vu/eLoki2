@@ -1,4 +1,4 @@
-package script.action;
+package script.action.impl;
 
 import java.time.Duration;
 
@@ -7,6 +7,9 @@ import org.openqa.selenium.interactions.PointerInput;
 
 import clients.Client;
 import clients.SeleniumClient;
+import script.action.Action;
+import script.action.ActionCompatibility;
+import script.action.ActionTick;
 
 /**
  * An action that moves the mouse to the given x, y location and scrolls the main
