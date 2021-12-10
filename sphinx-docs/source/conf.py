@@ -22,7 +22,7 @@ copyright = '2021, Allen Chen'
 author = 'Allen Chen'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.7'
+release = '0.2.8'
 
 
 # -- General configuration ---------------------------------------------------
