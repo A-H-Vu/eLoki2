@@ -1,5 +1,7 @@
 package clients;
 
+import java.io.File;
+
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -41,6 +43,10 @@ public class SeleniumChrome extends SeleniumClient {
 	 */
 	public void setProxy(Proxy proxy) {
 		options.addArguments("--proxy-server=socks5://"+proxy.getSocksProxy());
+	}
+	
+	public void addExtension(File path) {
+		options.addExtensions(path);
 	}
 	
 	public void init() {

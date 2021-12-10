@@ -18,6 +18,8 @@ import clients.Client;
 import clients.SeleniumChrome;
 import clients.SeleniumClient;
 import clients.SeleniumFirefox;
+import ext.extensions.ExtensionLoader;
+import ext.extensions.ExtensionsList;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentChoice;
@@ -258,6 +260,7 @@ public class Main {
 					System.err.println("The client must be a Selenium Client, either Selenium-Firefox or Selenium-Chrome");
 					System.exit(1);
 				}
+				ExtensionLoader.loadExtension(client, ExtensionsList.IgnoreXFrame);
 				client.init();
 				//Select capture method based on the --passive arg
 				if(res.getBoolean("passive")) {
