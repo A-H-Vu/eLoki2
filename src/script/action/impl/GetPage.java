@@ -39,11 +39,40 @@ public class GetPage extends Action {
 	public Action execute(Client client) {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
-			if(!sClient.getWebDriver().getCurrentUrl().equals(pageURL)){
+			//Reference and query portion of url are stripped before comparison in case there are
+			//any dynamically changing variables fed through the query while checking if it is on the right page
+			if(!stripQuery(sClient.getWebDriver().getCurrentUrl()).equals(stripQuery(pageURL))){
 				sClient.getWebDriver().get(pageURL);
 			}
 		}
 		return super.next;
+	}
+	
+	/**
+	 * Strips the query and reference portion of the URL
+	 * @param url
+	 * @return
+	 */
+	private static String stripQuery(String url) {
+		try {
+			//A copy of URL.toString() without the query and reference parameters
+			URL u = new URL(url);
+			StringBuffer result = new StringBuffer();
+			result.append(u.getProtocol());
+			result.append(":");
+			if (u.getAuthority() != null && u.getAuthority().length() > 0) {
+				result.append("//");
+				result.append(u.getAuthority());
+			}
+			if (u.getPath() != null) {
+				result.append(u.getPath());
+			}
+			return result.toString();
+		//Catch block should never be triggered as url is checked in the constructor
+		//added just in case
+		}catch(MalformedURLException e) {
+			return url;
+		}
 	}
 
 	@Override
