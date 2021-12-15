@@ -1,6 +1,7 @@
 package clients;
 
 import java.io.File;
+import java.util.Collections;
 
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
@@ -22,6 +23,9 @@ public class SeleniumChrome extends SeleniumClient {
 		options = new ChromeOptions();
 		//Disable CORS as the injected scripts tend to be communicating from different sources
 		options.addArguments("--disable-web-security");
+		options.addArguments("--disable-blink-features=AutomationControlled");
+		options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+		options.setExperimentalOption("useAutomationExtension", false);
 		options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 	}
 	
