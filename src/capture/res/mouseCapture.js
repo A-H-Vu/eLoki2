@@ -378,7 +378,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         });
 
         //TODO figure out why this doesn't work
-        ifrmDoc.body.addEventListener('scroll', event =>{
+        ifrmDoc.addEventListener('scroll', event =>{
             if(capturing) {
                 ticks.push({
                     content: `scrollWindow ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
