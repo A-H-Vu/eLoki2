@@ -6,6 +6,7 @@ import clients.Client;
 import clients.SeleniumClient;
 import script.action.Action;
 import script.action.ActionCompatibility;
+import script.action.ActionTick;
 
 /**
  * Resizes the window to the given width and height
@@ -20,6 +21,10 @@ public class ResizeWindow extends Action {
 		String[] args = raw.split(" ");
 		width = Integer.parseInt(args[1]);
 		height = Integer.parseInt(args[2]);
+	}
+	public ResizeWindow(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
 	}
 
 	@Override
@@ -48,5 +53,10 @@ public class ResizeWindow extends Action {
 		}
 		return ActionCompatibility.Incompatible;
 	}
+	@Override
+	public Action clone() {
+		return new ResizeWindow(this);
+	}
+	
 
 }

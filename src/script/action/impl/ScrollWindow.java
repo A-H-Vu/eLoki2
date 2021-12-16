@@ -20,7 +20,10 @@ public class ScrollWindow extends Action {
 		String[] args = raw.split(" ");
 		scrollX = Integer.parseInt(args[1]);
 		scrollY = Integer.parseInt(args[2]);
-		
+	}
+	public ScrollWindow(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
 	}
 
 	@Override
@@ -43,6 +46,10 @@ public class ScrollWindow extends Action {
 	@Override
 	protected ActionTick.Response actionTickResponse() {
 		return ActionTick.Response.Skippable;
+	}
+	@Override
+	public Action clone() {
+		return new ScrollWindow(this);
 	}
 
 }

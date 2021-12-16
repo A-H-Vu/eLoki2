@@ -20,7 +20,11 @@ public class AwaitPageLoad extends Action {
 
 	public AwaitPageLoad(String raw) {
 		super(raw);
-
+	}
+	
+	public AwaitPageLoad(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
 	}
 
 	@Override
@@ -47,6 +51,11 @@ public class AwaitPageLoad extends Action {
 	@Override
 	protected ActionTick.Response actionTickResponse() {
 		return ActionTick.Response.ResetEpochToEnd;
+	}
+
+	@Override
+	public Action clone() {
+		return new AwaitPageLoad(this);
 	}
 
 }

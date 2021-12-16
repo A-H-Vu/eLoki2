@@ -109,6 +109,15 @@ public class ScriptController {
 	 * @param script The first action in the script
 	 * @param client Client to use
 	 */
+	public void runScript(Script script, Client client) {
+		runScript(script.getFirstAction(), client);
+	}
+	
+	/**
+	 * Runs a script starting from the given action using the client given
+	 * @param script The first action in the script
+	 * @param client Client to use
+	 */
 	public void runScript(Action script, Client client) {
 		Action current = script;
 		//Epoch and Epoch Rel are the main values used to control timing

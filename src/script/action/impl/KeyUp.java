@@ -19,6 +19,10 @@ public class KeyUp extends Action {
 		}
 		
 	}
+	public KeyUp(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
+	}
 
 	@Override
 	public Action execute(Client client) {
@@ -48,6 +52,10 @@ public class KeyUp extends Action {
 	@Override
 	protected ActionTick.Response actionTickResponse() {
 		return ActionTick.Response.UseTick;
+	}
+	@Override
+	public Action clone() {
+		return new KeyUp(this);
 	}
 
 }

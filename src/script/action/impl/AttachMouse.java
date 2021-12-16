@@ -4,6 +4,7 @@ import clients.Client;
 import clients.SeleniumClient;
 import script.action.Action;
 import script.action.ActionCompatibility;
+import script.action.ActionTick;
 
 /**
  * Action used to show the position of the mouse visually.
@@ -16,6 +17,10 @@ public class AttachMouse extends Action{
 
 	public AttachMouse(String raw) {
 		super(raw);
+	}
+	public AttachMouse(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
 	}
 	@Override
 	public Action execute(Client client) {
@@ -55,6 +60,10 @@ public class AttachMouse extends Action{
 			return ActionCompatibility.Ok;
 		}
 		return ActionCompatibility.Incompatible;
+	}
+	@Override
+	public Action clone() {
+		return new AttachMouse(this);
 	}
 
 }

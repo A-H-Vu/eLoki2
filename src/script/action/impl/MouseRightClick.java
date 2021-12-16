@@ -18,9 +18,11 @@ public class MouseRightClick extends Action {
 
 	public MouseRightClick(String raw) {
 		super(raw);
-		// TODO Auto-generated constructor stub
 	}
-
+	public MouseRightClick(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
+	}
 	@Override
 	public Action execute(Client client) {
 		if (client instanceof SeleniumClient) {
@@ -44,6 +46,10 @@ public class MouseRightClick extends Action {
 	@Override
 	protected ActionTick.Response actionTickResponse() {
 		return ActionTick.Response.UseTick;
+	}
+	@Override
+	public Action clone() {
+		return new MouseRightClick(this);
 	}
 
 }

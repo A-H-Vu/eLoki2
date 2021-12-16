@@ -34,6 +34,10 @@ public class GetPage extends Action {
 			}
 		}
 	}
+	public GetPage(Action original) throws ParseException {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
+	}
 
 	@Override
 	public Action execute(Client client) {
@@ -86,6 +90,14 @@ public class GetPage extends Action {
 	@Override
 	protected ActionTick.Response actionTickResponse() {
 		return ActionTick.Response.ResetEpochToEnd;
+	}
+	@Override
+	public Action clone() {
+		try {
+			return new GetPage(this);
+		} catch (ParseException e) {
+			return null;
+		}
 	}
 
 }

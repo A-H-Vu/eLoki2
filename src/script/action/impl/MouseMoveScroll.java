@@ -32,7 +32,10 @@ public class MouseMoveScroll extends Action {
 		scrollX = Integer.parseInt(args[3]);
 		scrollY = Integer.parseInt(args[4]);
 	}
-
+	public MouseMoveScroll(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
+	}
 	@Override
 	public Action execute(Client client) {
 
@@ -46,7 +49,34 @@ public class MouseMoveScroll extends Action {
 		}
 		return super.next;
 	}
+	public String getRaw() {
+		return "mouseMoveScroll "+X+" "+Y+" "+scrollX+" "+scrollY;
+	}
 
+	public int getX() {
+		return X;
+	}
+	public void setX(int x) {
+		X = x;
+	}
+	public int getY() {
+		return Y;
+	}
+	public void setY(int y) {
+		Y = y;
+	}
+	public int getScrollX() {
+		return scrollX;
+	}
+	public void setScrollX(int scrollX) {
+		this.scrollX = scrollX;
+	}
+	public int getScrollY() {
+		return scrollY;
+	}
+	public void setScrollY(int scrollY) {
+		this.scrollY = scrollY;
+	}
 	@Override
 	public ActionCompatibility checkComptability(Client client) {
 		if (client instanceof SeleniumClient) {
@@ -57,6 +87,10 @@ public class MouseMoveScroll extends Action {
 	@Override
 	protected ActionTick.Response actionTickResponse() {
 		return ActionTick.Response.Skippable;
+	}
+	@Override
+	public Action clone() {
+		return new MouseMoveScroll(this);
 	}
 
 }

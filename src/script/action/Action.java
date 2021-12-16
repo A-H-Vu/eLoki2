@@ -26,6 +26,11 @@ public abstract class Action {
 		//default for if tick val is not set.
 		tick = new ActionTick(0, ActionTick.Response.Ignore);
 	}
+	
+	protected Action(Action original) {
+		this.raw = original.getRaw();
+		tick = new ActionTick(original.tick.getValue(), original.tick.getResponse());
+	}
 
 	/**
 	 * Get the original string representing the action
@@ -120,4 +125,7 @@ public abstract class Action {
 		this.next.setPreviousAction(this.previous);
 		return this.previous;
 	}
+	
+	@Override
+	public abstract Action clone();
 }

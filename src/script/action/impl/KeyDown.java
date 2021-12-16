@@ -18,6 +18,10 @@ public class KeyDown extends Action {
 			keys = raw.substring(space+1);
 		}
 	}
+	public KeyDown(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
+	}
 
 	@Override
 	public Action execute(Client client) {
@@ -48,5 +52,10 @@ public class KeyDown extends Action {
 	protected ActionTick.Response actionTickResponse() {
 		return ActionTick.Response.UseTick;
 	}
+	@Override
+	public Action clone() {
+		return new KeyDown(this);
+	}
+	
 
 }

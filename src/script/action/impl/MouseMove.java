@@ -28,7 +28,10 @@ public class MouseMove extends Action {
 		x = Integer.parseInt(args[1]);
 		y = Integer.parseInt(args[2]);
 	}
-
+	public MouseMove(Action original) {
+		this(original.getRaw());
+		this.tick = new ActionTick(original.getTick().getValue(), original.getTick().getResponse());
+	}
 	@Override
 	public Action execute(Client client) {
 		if (client instanceof SeleniumClient) {
@@ -52,6 +55,10 @@ public class MouseMove extends Action {
 	@Override
 	protected ActionTick.Response actionTickResponse() {
 		return ActionTick.Response.Skippable;
+	}
+	@Override
+	public Action clone() {
+		return new MouseMove(this);
 	}
 
 }

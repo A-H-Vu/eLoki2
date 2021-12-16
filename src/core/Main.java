@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.Proxy;
@@ -29,6 +30,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 import scraper.SeleniumScraper;
+import script.Script;
 import script.ScriptController;
 import script.action.*;
 import script.action.impl.AttachMouse;
@@ -82,6 +84,10 @@ public class Main {
 		Subparser runscript = subparsers.addParser("run")
 				.help("Run a script")
 				.setDefault("runscript", true);
+		runscript.addArgument("--randomMove")
+			.help("Randomize movement of mouse slightly")
+			.action(Arguments.storeTrue())
+			.dest("randomize");
 		runscript.addArgument("script")
 			.nargs("+")
 			.help("Script to run");
@@ -201,7 +207,21 @@ public class Main {
 				for(Object s:res.getList("script")) {
 					try {
 						Action initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
-						defaultController.runScript(initial, client);
+						if(res.getBoolean("randomize")) {
+							Script script = new Script(initial);
+							script.forEach(a ->{
+								if(a instanceof MouseMoveScroll) {
+									MouseMoveScroll mv = (MouseMoveScroll)a;
+									Random r = new Random();
+									mv.setX(mv.getX()-5+r.nextInt(11));
+									mv.setY(mv.getY()-5+r.nextInt(11));
+								}
+							});
+							defaultController.runScript(script, client);
+						}
+						else {
+							defaultController.runScript(initial, client);
+						}
 					} catch (IOException e) {
 						System.err.println("Error reading script "+s);
 						System.err.println(e.getMessage());
