@@ -48,6 +48,16 @@ public class SeleniumChrome extends SeleniumClient {
 	public void setProxy(Proxy proxy) {
 		options.addArguments("--proxy-server=socks5://"+proxy.getSocksProxy());
 	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setUserAgent(String userAgent) {
+		options.addArguments("user-agent="+userAgent);
+	}
+
 	
 	public void addExtension(File path) {
 		options.addExtensions(path);
@@ -56,5 +66,4 @@ public class SeleniumChrome extends SeleniumClient {
 	public void init() {
 		super.webdriver = new ChromeDriver(options);
 	}
-
 }

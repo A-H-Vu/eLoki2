@@ -32,11 +32,18 @@ public abstract class SeleniumClient extends Client implements Closeable {
 	 * 
 	 * Use {@link Proxy#setSocksProxy} and {@link Proxy#setSocksVersion(Integer)} to set.
 	 * 
-	 * Optionally set usernamd and password if necessary
+	 * Optionally set username and password if necessary
+	 * 
 	 * @param proxy The {@link Proxy} object with the SOCKS proxy information
 	 */
 	public abstract void setProxy(Proxy proxy);
 	
+	/**
+	 * Sets the user agent for the browser session.
+	 * This will have no effect after the browser has been launched.
+	 * @param userAgent The useragent string to use for the browser session, otherwise the default useragent for the browser is used
+	 */
+	public abstract void setUserAgent(String userAgent);
 	/**
 	 * Gets the Selenium Webdriver for the client
 	 * Most functions in the SeleniumClient class wrap around the webdriver.

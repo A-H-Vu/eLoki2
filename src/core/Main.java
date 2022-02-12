@@ -76,6 +76,9 @@ public class Main {
 			.dest("proxy")
 			.metavar("address:port")
 			.help("Set the [address:port] of the SOCKS5 proxy to use");
+		parser.addArgument("--useragent")
+			.dest("useragent")
+			.help("Sets the user agent for the browser");
 		parser.version(version);
 		parser.addArgument("--version").action(Arguments.version());
 		
@@ -188,6 +191,9 @@ public class Main {
 					proxy.setSocksVersion(5);
 					proxy.setSocksProxy(res.getString("proxy"));
 					sClient.setProxy(proxy);
+				}
+				if(res.getString("useragent")!=null) {
+					sClient.setUserAgent(res.getString("useragent"));
 				}
 			}
 			

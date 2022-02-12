@@ -53,6 +53,11 @@ public class SeleniumFirefox extends SeleniumClient {
 		extensionPaths.add(path.toPath());
 		profile.addExtension(path);
 	}
+
+	@Override
+	public void setUserAgent(String userAgent) {
+		profile.setPreference("general.useragent.override",	 userAgent);
+	}
 	
 	public void init() {
 		options.setProfile(profile);
@@ -64,6 +69,7 @@ public class SeleniumFirefox extends SeleniumClient {
 			he.installExtension(p);
 		}
 	}
+
 	
 	
 	

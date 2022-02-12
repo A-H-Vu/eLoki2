@@ -340,7 +340,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         ifrmDoc.addEventListener('click', event => {
             if (capturing) {
                 event = event || window.event;
-                var target = event.target || event.srcElement
+                var target = event.currentTarget || event.srcElement
                 cssp = cssPath(target);
                 if(typeof(cssp)==='undefined')
                     cssp = "";

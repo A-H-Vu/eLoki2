@@ -23,7 +23,7 @@ Usage
 
 .. code-block:: console
 
-    $ java -jar eLoki2.jar [--headless] [--driver DRIVERFILE] [--client CLIENT] [--proxy address:port] run <script\>
+    $ java -jar eLoki2.jar [--headless] [--driver DRIVERFILE] [--client CLIENT] [--proxy address:port] run <script>
 
 \<script\> is the location of the script file(s) recorded by the capture module.
 
