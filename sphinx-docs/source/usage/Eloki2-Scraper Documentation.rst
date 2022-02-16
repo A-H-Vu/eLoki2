@@ -73,7 +73,11 @@ The client to use, currently the only options are ``SeleniumChrome`` and ``Selen
 The proxy to use, by default no proxy is used. The type of proxy used is a socks5 proxy. The proxy is specified in the following format ``address:port`` where the address is either the ip address of the proxy or is domain name i.e. 127.0.0.1, localhost etc. The port is the port that the socks5 proxy is open on and must be a number from 0 to 65535. This flag can be used to connect to the tor network if the tor browser is open and connected as follows ``--proxy 127.0.0.1:9150``
 
 
+-----------
+--useragent
+-----------
 
+Changes the useragent string that the browser uses.
 
 --------------
 --full-browser
