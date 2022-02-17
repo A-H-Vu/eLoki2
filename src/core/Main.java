@@ -45,6 +45,7 @@ import script.action.impl.MouseMoveScroll;
 import script.action.impl.MouseRightClick;
 import script.action.impl.ResizeWindow;
 import script.action.impl.ScrollWindow;
+import script.action.impl.UserAgent;
 import script.action.impl.Wait;
 
 public class Main {
@@ -145,6 +146,7 @@ public class Main {
 		defaultController.addAction("keyStroke", KeyStroke.class);
 		defaultController.addAction("keyDown", KeyDown.class);
 		defaultController.addAction("keyUp", KeyUp.class);
+		defaultController.addAction("userAgent", UserAgent.class);
 		
 		
 		try {

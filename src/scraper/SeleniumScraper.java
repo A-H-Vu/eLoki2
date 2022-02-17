@@ -17,6 +17,7 @@ import java.sql.SQLException;
 
 import org.jsoup.HttpStatusException;
 import org.jsoup.UnsupportedMimeTypeException;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
@@ -253,7 +254,7 @@ public class SeleniumScraper {
 			return;
 		}
 		//Find all links on the page using a css selector
-		for(WebElement e:body.findElementsByCssSelector("a[href]")){
+		for(WebElement e:body.findElements(By.cssSelector("a[href]"))){
 			String u = e.getAttribute("href");
 //			System.out.println("u="+u);
 			//quick check to try and resolve relative paths
