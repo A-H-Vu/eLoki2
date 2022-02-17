@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>3.141.59</version>
+			<version>4.1.2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>
@@ -56,29 +56,28 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-
+			<!-- fix for Selenium 4 https://github.com/SeleniumHQ/selenium/issues/10132#issuecomment-1035028801 -->
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>core.Main</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>core.Main</mainClass>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
             <groupId>com.akathist.maven.plugins.launch4j</groupId>
             <artifactId>launch4j-maven-plugin</artifactId>
@@ -92,7 +91,7 @@
                     </goals>
                     <configuration>
                         <headerType>console</headerType>
-                        <jar>${project.build.directory}/${project.artifactId}-jar-with-dependencies.jar</jar>
+                        <jar>${project.build.directory}/${project.artifactId}.jar</jar>
                         <outfile>${project.build.directory}/eLoki2.exe</outfile>
                         <downloadUrl>http://java.com/download</downloadUrl>
                         <classPath>
