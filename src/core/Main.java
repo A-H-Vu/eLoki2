@@ -50,7 +50,7 @@ import script.action.impl.Wait;
 
 public class Main {
 	//Version string, should be same as the version string in the pom.xml file
-	private static String version = "0.3.0";
+	private static String version = "0.3.1";
 	//Class that runs scripts, for now only create one as default, in the future one will be used on each thread
 	public static ScriptController defaultController = new ScriptController();
 	
