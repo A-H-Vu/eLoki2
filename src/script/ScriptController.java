@@ -74,7 +74,7 @@ public class ScriptController {
 			return;
 		}
 		
-		String action = parseMatcher.group(2).split(" ")[0];
+		String action = parseMatcher.group(2).split(" ")[0].toLowerCase();
 		//actionMap contains all possible actions
 		if (actionMap.containsKey(action)) {
 			try {
@@ -91,9 +91,10 @@ public class ScriptController {
 					current = n;
 				}
 			} catch (Exception e) {
+				//ignore errors in parsing, most likely due to bad user added lines etc
+				//print errors so it can be debugged if necessary
 				System.err.println("Error parsing action "+line+", skipping");
 				e.printStackTrace();
-				// TODO proper error handling
 			}
 		} else {
 			System.err.println("Unrecognized Action keyword " + action + ", skipping");
@@ -202,6 +203,6 @@ public class ScriptController {
 	public void addAction(String name, Class<? extends Action> actionClass)
 			throws NoSuchMethodException, SecurityException {
 		actionClass.getConstructor(String.class);
-		actionMap.put(name, actionClass);
+		actionMap.put(name.toLowerCase(), actionClass);
 	}
 }

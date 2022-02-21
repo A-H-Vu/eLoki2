@@ -33,20 +33,7 @@ import scraper.SeleniumScraper;
 import script.Script;
 import script.ScriptController;
 import script.action.*;
-import script.action.impl.AttachMouse;
-import script.action.impl.AwaitPageLoad;
-import script.action.impl.GetPage;
-import script.action.impl.KeyDown;
-import script.action.impl.KeyStroke;
-import script.action.impl.KeyUp;
-import script.action.impl.MouseClick;
-import script.action.impl.MouseMove;
-import script.action.impl.MouseMoveScroll;
-import script.action.impl.MouseRightClick;
-import script.action.impl.ResizeWindow;
-import script.action.impl.ScrollWindow;
-import script.action.impl.UserAgent;
-import script.action.impl.Wait;
+import script.action.impl.*;
 
 public class Main {
 	//Version string, should be same as the version string in the pom.xml file
