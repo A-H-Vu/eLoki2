@@ -23,7 +23,6 @@ public class ExtensionLoader {
 				try {
 					String name = extractExtension(e.getChromePath());
 					((SeleniumChrome)client).addExtension(new File(name));
-					Files.delete(new File(name).toPath());
 				}catch(IOException | NullPointerException e1) {
 					System.err.println("Error Loading Extension "+e.getChromeName());
 					e1.printStackTrace();
@@ -33,7 +32,6 @@ public class ExtensionLoader {
 				try {
 					String name = extractExtension(e.getFirefoxPath());
 					((SeleniumFirefox)client).addExtension(new File(name));
-					Files.delete(new File(name).toPath());
 				}catch(IOException | NullPointerException e1) {
 					System.err.println("Error Loading Extension "+e.getFirefoxName());
 					e1.printStackTrace();
