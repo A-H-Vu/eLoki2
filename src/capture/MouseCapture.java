@@ -2,6 +2,7 @@ package capture;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Random;
 
 import org.openqa.selenium.JavascriptException;
@@ -58,7 +59,7 @@ public class MouseCapture {
 		//Setup some variables that persist beyond loops
 		WebDriver webdriver = browser.getWebDriver();
 		JavascriptExecutor jsExec = browser.getJSExecutor();
-		WebDriverWait wait = new WebDriverWait(webdriver, 100000);
+		WebDriverWait wait = new WebDriverWait(webdriver, Duration.ofMinutes(10));
 		//Status string used to send error messages on the Main page 
 		String status = "";
 		//Load the javascript that will be injected, Main is for the main page and the other to record

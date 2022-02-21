@@ -1,5 +1,7 @@
 package script.action.impl;
 
+import java.time.Duration;
+
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -31,7 +33,7 @@ public class AwaitPageLoad extends Action {
 	public Action execute(Client client) {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
-			WebDriverWait webDriverWait = new WebDriverWait(sClient.getWebDriver(), 180);
+			WebDriverWait webDriverWait = new WebDriverWait(sClient.getWebDriver(), Duration.ofMinutes(3));
 			webDriverWait.until((ExpectedCondition<Boolean>) wd -> {
 				assert wd != null;
 				return ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete");
