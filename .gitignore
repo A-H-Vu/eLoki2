@@ -1,2 +1,3 @@
 .settings/**
 /target/**
+dependancy-reduced-pom.xml
