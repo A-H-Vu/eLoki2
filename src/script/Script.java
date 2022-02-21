@@ -35,4 +35,16 @@ public class Script {
 		}
 	}
 	
+	public Script clone() {
+		Script s = new Script(this.first.clone());
+		Action a = first.getNextAction();
+		Action sa = s.first;
+		while(a!=null) {
+			sa.chainNextAction(a.clone());
+			a = a.getNextAction();
+			sa = sa.getNextAction();
+		}
+		return s;
+	}
+	
 }
