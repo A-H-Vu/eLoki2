@@ -7,9 +7,12 @@ import org.openqa.selenium.interactions.PointerInput;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
+import script.action.MousePositionAction;
+import script.action.ScrollPositionAction;
 
 /**
  * An action that moves the mouse to the given x, y location and scrolls the main
@@ -18,7 +21,7 @@ import script.action.ActionTick;
  *
  */
 //temporary class for compatibility with the current script generation
-public class MouseMoveScroll extends Action {
+public class MouseMoveScroll extends ActionImpl implements MousePositionAction,ScrollPositionAction{
 	private int X;
 	private int Y;
 	private int scrollX;

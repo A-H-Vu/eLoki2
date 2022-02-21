@@ -6,8 +6,9 @@ import org.openqa.selenium.interactions.PointerInput;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
 
 /**
@@ -15,7 +16,7 @@ import script.action.ActionTick;
  * @author Allen
  *
  */
-public class MouseClick extends Action {
+public class MouseClick extends ActionImpl {
 	
 	private String css = "";
 	

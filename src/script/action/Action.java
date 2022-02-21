@@ -2,44 +2,14 @@ package script.action;
 
 import clients.Client;
 
-public abstract class Action {
-	
-	/**
-	 * Raw input for the action before any parsing or changes
-	 */
-	private final String raw;
-	/**
-	 * Time this action occurs when initially recorded, in milliseconds
-	 */
-	protected ActionTick tick;
-	
-	// action chain
-	protected Action next;
-	protected Action previous;
-	
-	/**
-	 * Create a new instance of the action
-	 * @param raw 
-	 */
-	protected Action(String raw) {
-		this.raw = raw;
-		//default for if tick val is not set.
-		tick = new ActionTick(0, ActionTick.Response.Ignore);
-	}
-	
-	protected Action(Action original) {
-		this.raw = original.getRaw();
-		tick = new ActionTick(original.tick.getValue(), original.tick.getResponse());
-	}
+public interface Action {
 
 	/**
 	 * Get the original string representing the action
 	 * 
 	 * @return
 	 */
-	public String getRaw() {
-		return raw;
-	}
+	public String getRaw();
 
 	/**
 	 * Execute the action using the specified client
@@ -47,31 +17,20 @@ public abstract class Action {
 	 * @param client
 	 * @return next action to execute
 	 */
-	public abstract Action execute(Client client);
-	
+	public Action execute(Client client);
+
 	/**
 	 * Checks whether the action is compatible with the current client
 	 * @param client Client to check compatability with
 	 * @return If it is compatiable or not and whether it is expected to break the script or not
 	 */
-	public abstract ActionCompatibility checkComptability(Client client);
-	
-	/**
-	 * 
-	 * See {@link ActionTick.Response} for details on what each one does 
-	 * @return
-	 */
-	protected ActionTick.Response actionTickResponse() {
-		return ActionTick.Response.Ignore;
-	}
-	
+	public ActionCompatibility checkComptability(Client client);
+
 	/**
 	 * Used to set the value of the action tick, if it is present in the script
 	 * @param tick
 	 */
-	public void setTickVal(long tick) {
-		this.tick = new ActionTick(tick, actionTickResponse());
-	}
+	public void setTickVal(long tick);
 
 	/**
 	 * Time this action occurs from the start of the script in milliseconds Negative
@@ -79,9 +38,7 @@ public abstract class Action {
 	 * 
 	 * @return
 	 */
-	public ActionTick getTick() {
-		return tick;
-	}
+	public ActionTick getTick();
 
 	// Stuff to manage the action chain
 	// Note: this was sort of designed so that control flow can potentially be
@@ -90,42 +47,23 @@ public abstract class Action {
 	//set functions sets the next/prev action values directly without chaining them
 	//get functions gets the next/prev actions
 	//Additionally getNext is used to get the next action if the action cannot be executed/is skipped for any reason
-	public void chainNextAction(Action next) {
-		this.next = next;
-		next.setPreviousAction(this);
-	}
+	public void chainNextAction(Action next);
 
-	public void chainPreviousAction(Action previous) {
-		this.previous = previous;
-		previous.setNextAction(this);
-	}
+	public void chainPreviousAction(Action previous);
 
-	public void setNextAction(Action next) {
-		this.next = next;
-	}
+	public void setNextAction(Action next);
 
-	public void setPreviousAction(Action previous) {
-		this.previous = previous;
-	}
+	public void setPreviousAction(Action previous);
 
-	public Action getNextAction() {
-		return next;
-	}
+	public Action getNextAction();
 
-	public Action getPreviousAction() {
-		return previous;
-	}
+	public Action getPreviousAction();
 
 	/**
 	 * Remove this action from the chain 
 	 * @return the previous action
 	 */
-	public Action remove() {
-		this.previous.setNextAction(this.next);
-		this.next.setPreviousAction(this.previous);
-		return this.previous;
-	}
+	public Action remove();
 	
-	@Override
-	public abstract Action clone();
+	public Action clone();
 }

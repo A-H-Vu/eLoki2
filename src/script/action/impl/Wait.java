@@ -1,11 +1,12 @@
 package script.action.impl;
 
 import clients.Client;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
 
-public class Wait extends Action {
+public class Wait extends ActionImpl {
 	int delay = 0;
 	public Wait(String raw) {
 		super(raw);

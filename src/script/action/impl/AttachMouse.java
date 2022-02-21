@@ -2,8 +2,9 @@ package script.action.impl;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
 
 /**
@@ -13,7 +14,7 @@ import script.action.ActionTick;
  * @author Allen
  *
  */
-public class AttachMouse extends Action{
+public class AttachMouse extends ActionImpl{
 
 	public AttachMouse(String raw) {
 		super(raw);

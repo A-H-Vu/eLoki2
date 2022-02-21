@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import clients.Client;
+import script.action.ActionImpl;
 import script.action.Action;
 import script.action.ActionTick;
 
@@ -20,14 +21,14 @@ import script.action.ActionTick;
  */
 public class ScriptController {
 
-	private Map<String, Class<? extends Action>> actionMap = new HashMap<String, Class<? extends Action>>();
+	private Map<String, Class<? extends ActionImpl>> actionMap = new HashMap<String, Class<? extends ActionImpl>>();
 	
 	//Variables used in script parsing, initial action is the start of the script chain and
 	//current is the latest action parsed
-	private Action initial;
+	private ActionImpl initial;
 	private Action current;
 	//Various functions to parse a script file 
-	public Action parseScript(List<String> lines) {
+	public ActionImpl parseScript(List<String> lines) {
 		initial = null;
 		current = null;
 		for (String line : lines) {
@@ -79,7 +80,7 @@ public class ScriptController {
 		if (actionMap.containsKey(action)) {
 			try {
 				//Create the action using the string constructor for it
-				Action n = actionMap.get(action).getConstructor(String.class).newInstance(parseMatcher.group(2));
+				ActionImpl n = actionMap.get(action).getConstructor(String.class).newInstance(parseMatcher.group(2));
 				//Add the action to the action chain, if initial set as such
 				if (initial == null) {
 					initial = n;
@@ -200,7 +201,7 @@ public class ScriptController {
 	 * @throws SecurityException     if the class cannot be loaded due to a security
 	 *                               manager
 	 */
-	public void addAction(String name, Class<? extends Action> actionClass)
+	public void addAction(String name, Class<? extends ActionImpl> actionClass)
 			throws NoSuchMethodException, SecurityException {
 		actionClass.getConstructor(String.class);
 		actionMap.put(name.toLowerCase(), actionClass);

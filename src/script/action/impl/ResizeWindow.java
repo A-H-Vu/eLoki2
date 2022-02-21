@@ -4,8 +4,9 @@ import org.openqa.selenium.Dimension;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
 
 /**
@@ -13,7 +14,7 @@ import script.action.ActionTick;
  * @author Allen
  *
  */
-public class ResizeWindow extends Action {
+public class ResizeWindow extends ActionImpl {
 	private int width;
 	private int height;
 	public ResizeWindow(String raw) {

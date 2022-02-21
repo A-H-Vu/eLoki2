@@ -201,7 +201,7 @@ public class Main {
 				client.init();
 				for(Object s:res.getList("script")) {
 					try {
-						Action initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
+						ActionImpl initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
 						if(res.getBoolean("randomize")) {
 							Script script = new Script(initial);
 							script.forEach(a ->{

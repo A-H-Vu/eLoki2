@@ -7,16 +7,18 @@ import org.openqa.selenium.interactions.PointerInput;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
+import script.action.MousePositionAction;
 
 /**
  * An action that moves the mouse to the given x, y location
  * @author Allen
  *
  */
-public class MouseMove extends Action {
+public class MouseMove extends ActionImpl implements MousePositionAction{
 
 	// co-ordinates to move to
 	private int x;
@@ -44,6 +46,18 @@ public class MouseMove extends Action {
 		return super.next;
 	}
 
+	public int getX() {
+		return x;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+	public int getY() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
 	@Override
 	public ActionCompatibility checkComptability(Client client) {
 		if (client instanceof SeleniumClient) {

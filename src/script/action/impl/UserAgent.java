@@ -6,11 +6,12 @@ import org.openqa.selenium.chromium.ChromiumDriver;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
 
-public class UserAgent extends Action {
+public class UserAgent extends ActionImpl {
 	private String UA;
 	public UserAgent(String raw) {
 		super(raw);

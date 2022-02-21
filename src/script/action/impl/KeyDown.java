@@ -4,12 +4,13 @@ import org.openqa.selenium.interactions.Actions;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
 import script.action.SeleniumKeyMapping;
 
-public class KeyDown extends Action {
+public class KeyDown extends ActionImpl {
 	private String keys = "";
 	public KeyDown(String raw) {
 		super(raw);

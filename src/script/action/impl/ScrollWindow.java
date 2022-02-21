@@ -2,16 +2,18 @@ package script.action.impl;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
+import script.action.ScrollPositionAction;
 
 /**
  * Scrolls the main document window to the given scrollX and scrollY values
  * @author Allen
  *
  */
-public class ScrollWindow extends Action {
+public class ScrollWindow extends ActionImpl implements ScrollPositionAction{
 	private int scrollX;
 	private int scrollY;
 
@@ -50,6 +52,18 @@ public class ScrollWindow extends Action {
 	@Override
 	public Action clone() {
 		return new ScrollWindow(this);
+	}
+	public int getScrollX() {
+		return scrollX;
+	}
+	public void setScrollX(int scrollX) {
+		this.scrollX = scrollX;
+	}
+	public int getScrollY() {
+		return scrollY;
+	}
+	public void setScrollY(int scrollY) {
+		this.scrollY = scrollY;
 	}
 
 }

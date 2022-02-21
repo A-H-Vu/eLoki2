@@ -6,8 +6,9 @@ import java.text.ParseException;
 
 import clients.Client;
 import clients.SeleniumClient;
-import script.action.Action;
+import script.action.ActionImpl;
 import script.action.ActionCompatibility;
+import script.action.Action;
 import script.action.ActionTick;
 
 /**
@@ -15,7 +16,7 @@ import script.action.ActionTick;
  * @author Allen
  *
  */
-public class GetPage extends Action {
+public class GetPage extends ActionImpl {
 	String pageURL = "about;blank";
 	
 	public GetPage(String raw) throws ParseException {
