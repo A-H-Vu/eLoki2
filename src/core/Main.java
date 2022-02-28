@@ -134,6 +134,8 @@ public class Main {
 		defaultController.addAction("keyDown", KeyDown.class);
 		defaultController.addAction("keyUp", KeyUp.class);
 		defaultController.addAction("userAgent", UserAgent.class);
+		defaultController.addAction("mouseDown", MouseDown.class);
+		defaultController.addAction("mouseUp", MouseUp.class);
 		
 		
 		try {
