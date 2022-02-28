@@ -338,6 +338,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
             }
         });
         ifrmDoc.addEventListener('mousedown', event => {
+            if(event.button==2) return;
             if (capturing) {
                 event = event || window.event;
                 var target = event.currentTarget || event.srcElement
@@ -357,12 +358,47 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                 cssp = cssPath(target);
                 if(typeof(cssp)==='undefined')
                     cssp = "";
-                ticks.push({
-                    content: `mouseUp ${event.button} ${cssp}`,
-                    t: new Date()
-                });
+                
+                tickReplaced = false
+                console.log("mouseup")
+                if(ticks.length>0){
+                    lastTick = ticks.pop()
+                    if(lastTick.content.startsWith("mouseDown")){
+                        args = lastTick.content.substring("mouseDown ".length)
+                        nContent = `${event.button} ${cssp}`
+                        console.log(nContent, args)
+                        if(args==nContent&&(new Date().getTime()-lastTick.t.getTime())<1000){
+                            console.log("rep")
+                            if(event.button==0){
+                                ticks.push({
+                                    content: `click ${cssp}`,
+                                    t: lastTick.t
+                                });
+                            }
+                            //no mouse up event appears to be fired for button 2
+                            // else if(event.button==2){
+                            //     ticks.push({
+                            //         content: `right_click`,
+                            //         t: lastTick.t
+                            //     });
+                            // }
+                            tickReplaced = true;
+                        }
+                    }
+                    if(!tickReplaced){
+                        ticks.push(lastTick)
+                    }
+                }
+                console.log("tc", tickReplaced)
+                if(!tickReplaced){
+                    ticks.push({
+                        content: `mouseUp ${event.button} ${cssp}`,
+                        t: new Date()
+                    });
+                }
+                testURL();
             }
-            testURL();
+            
         })
         // ifrmDoc.addEventListener('click', event => {
         //     if (capturing) {

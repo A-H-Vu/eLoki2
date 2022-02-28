@@ -32,7 +32,7 @@ public class MouseDown extends ActionImpl implements Action {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
 			Actions action = new Actions(sClient.getWebDriver());
-			action.tick(sClient.getPointerInput().createPointerUp(button));
+			action.clickAndHold();
 			action.perform();
 		}
 		return super.next;

@@ -1,5 +1,7 @@
 package script.action.impl;
 
+import org.openqa.selenium.devtools.DevTools;
+import org.openqa.selenium.devtools.HasDevTools;
 import org.openqa.selenium.interactions.Actions;
 
 import clients.Client;
@@ -27,12 +29,13 @@ public class MouseUp extends ActionImpl implements Action {
 	}
 	
 	//TODO logic to determine if it's a click vs press and hold or drag
+	//TODO also code in right clicks
 	@Override
 	public Action execute(Client client) {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
 			Actions action = new Actions(sClient.getWebDriver());
-			action.tick(sClient.getPointerInput().createPointerDown(button));
+			action.release();
 			action.perform();
 		}
 		return super.next;
