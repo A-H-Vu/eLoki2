@@ -16,9 +16,9 @@ public class MouseDown extends ActionImpl implements Action {
 	public MouseDown(String raw) {
 		super(raw);
 		String[] args = raw.split(" ");
-		button = Integer.parseInt(args[0]);
-		if(args.length>1) {
-			css = args[1];
+		button = Integer.parseInt(args[1]);
+		if(args.length>2) {
+			css = args[2];
 		}
 	}
 
