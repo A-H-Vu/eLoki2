@@ -337,7 +337,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                 });
             }
         });
-        ifrmDoc.addEventListener('click', event => {
+        ifrmDoc.addEventListener('mousedown', event => {
             if (capturing) {
                 event = event || window.event;
                 var target = event.currentTarget || event.srcElement
@@ -345,12 +345,39 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                 if(typeof(cssp)==='undefined')
                     cssp = "";
                 ticks.push({
-                    content: `click ${cssp}`,
+                    content: `mouseDown ${event.button} ${cssp}`,
                     t: new Date()
                 });
-                testURL();
             }
-        });
+        })
+        ifrmDoc.addEventListener('mouseup', event => {
+            if (capturing) {
+                event = event || window.event;
+                var target = event.currentTarget || event.srcElement
+                cssp = cssPath(target);
+                if(typeof(cssp)==='undefined')
+                    cssp = "";
+                ticks.push({
+                    content: `mouseUp ${event.button} ${cssp}`,
+                    t: new Date()
+                });
+            }
+            testURL();
+        })
+        // ifrmDoc.addEventListener('click', event => {
+        //     if (capturing) {
+        //         event = event || window.event;
+        //         var target = event.currentTarget || event.srcElement
+        //         cssp = cssPath(target);
+        //         if(typeof(cssp)==='undefined')
+        //             cssp = "";
+        //         ticks.push({
+        //             content: `click ${cssp}`,
+        //             t: new Date()
+        //         });
+        //         testURL();
+        //     }
+        // });
 
         ifrmDoc.addEventListener('contextmenu', event => {
             if (capturing) {
