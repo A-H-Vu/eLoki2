@@ -58,6 +58,30 @@ public interface Action {
 	public Action getNextAction();
 
 	public Action getPreviousAction();
+	
+	default long getDurationFromPrev() {
+		ActionTick selfTick = getTick();
+		ActionTick prevTick = getPreviousAction().getTick();
+		if(selfTick.getResponse()==ActionTick.Response.Ignore) {
+			return 1;
+		}
+		if(prevTick.getResponse()==ActionTick.Response.Ignore) {
+			return 1;
+		}
+		return getTick().getValue()-getPreviousAction().getTick().getValue();
+	}
+	
+	default long getDruationFromNext() {
+		ActionTick selfTick = getTick();
+		ActionTick nextTick = getNextAction().getTick();
+		if(selfTick.getResponse()==ActionTick.Response.Ignore) {
+			return 1;
+		}
+		if(nextTick.getResponse()==ActionTick.Response.Ignore) {
+			return 1;
+		}
+		return getTick().getValue()-getNextAction().getTick().getValue();
+	}
 
 	/**
 	 * Remove this action from the chain 
@@ -66,4 +90,8 @@ public interface Action {
 	public Action remove();
 	
 	public Action clone();
+
+	public void insertNextAction(Action next);
+
+	public void insertPreviousAction(Action prev);
 }

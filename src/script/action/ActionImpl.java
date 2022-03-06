@@ -98,13 +98,27 @@ public abstract class ActionImpl implements Action {
 	@Override
 	public void chainNextAction(Action next) {
 		this.next = next;
-		next.setPreviousAction(this);
+		if(next!=null)next.setPreviousAction(this);
 	}
 
 	@Override
 	public void chainPreviousAction(Action previous) {
 		this.previous = previous;
-		previous.setNextAction(this);
+		if(previous!=null)previous.setNextAction(this);
+	}
+	
+	@Override
+	public void insertNextAction(Action next) {
+		Action oldNext = this.next;
+		chainNextAction(next);
+		oldNext.chainPreviousAction(next);
+	}
+	
+	@Override
+	public void insertPreviousAction(Action previous) {
+		Action oldPrev = this.previous;
+		chainPreviousAction(previous);
+		oldPrev.chainNextAction(previous);
 	}
 
 	@Override
@@ -140,4 +154,10 @@ public abstract class ActionImpl implements Action {
 	
 	@Override
 	public abstract Action clone();
+	
+	@Override
+	public String toString() {
+		return getRaw();
+	}
 }
+

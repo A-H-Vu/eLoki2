@@ -1,7 +1,5 @@
 package script.action.impl;
 
-import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.HasDevTools;
 import org.openqa.selenium.interactions.Actions;
 
 import clients.Client;
@@ -48,14 +46,24 @@ public class MouseUp extends ActionImpl implements Action {
 		}
 		return ActionCompatibility.Incompatible;
 	}
-
+	
+	@Override
+	public String getRaw() {
+		return "mouseUp "+button;
+	}
 	@Override
 	public Action clone() {
 		return new MouseUp(this);
 	}
 	
+	public int getButton() {
+		return button;
+	}
+	
+	
 	//used by MouseDown to determine if its a click or a click and hold
 	//can only emulate a click with javascript
+	//currently unused
 	String getCSS() {
 		return css;
 	}

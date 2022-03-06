@@ -45,12 +45,20 @@ public class MouseDown extends ActionImpl implements Action {
 		}
 		return ActionCompatibility.Incompatible;
 	}
-
+	
+	@Override
+	public String getRaw() {
+		return "mouseDown "+button;
+	}
+	
 	@Override
 	public Action clone() {
 		return new MouseDown(this);
 	}
-	
+
+	public int getButton() {
+		return button;
+	}
 	//used by MouseUp to determine if its a click or a click and hold
 	//can only emulate a click with javascript
 	String getCSS() {

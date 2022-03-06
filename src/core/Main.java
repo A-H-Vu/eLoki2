@@ -34,6 +34,7 @@ import script.Script;
 import script.ScriptController;
 import script.action.*;
 import script.action.impl.*;
+import script.mod.CreateClickAndDrag;
 
 public class Main {
 	//Version string, should be same as the version string in the pom.xml file
@@ -136,6 +137,7 @@ public class Main {
 		defaultController.addAction("userAgent", UserAgent.class);
 		defaultController.addAction("mouseDown", MouseDown.class);
 		defaultController.addAction("mouseUp", MouseUp.class);
+		defaultController.addAction("dragDrop", DragAndDrop.class);
 		
 		
 		try {
@@ -204,8 +206,10 @@ public class Main {
 				for(Object s:res.getList("script")) {
 					try {
 						ActionImpl initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
+						Script script = new Script(initial);
+						
 						if(res.getBoolean("randomize")) {
-							Script script = new Script(initial);
+							
 							script.forEach(a ->{
 								if(a instanceof MousePositionAction) {
 									MousePositionAction mv = (MousePositionAction)a;
@@ -272,11 +276,9 @@ public class Main {
 									}
 								}
 							});
-							defaultController.runScript(script, client);
 						}
-						else {
-							defaultController.runScript(initial, client);
-						}
+						script = new CreateClickAndDrag().modify(script);
+						defaultController.runScript(script, client);
 					} catch (IOException e) {
 						System.err.println("Error reading script "+s);
 						System.err.println(e.getMessage());
