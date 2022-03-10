@@ -31,7 +31,9 @@ public class SimpleRandomMove implements ScriptMod {
 					yPrev = preva.getY();
 					tPrev = Math.atan2(yInit-yPrev, xInit-xPrev);
 					if(xPrev==xInit&&yPrev==yInit) {
-						prev = false;
+						//avoid adjusting points where there are two identical ones in a row
+						///to avoid odd jumping around
+						return;
 					}
 				}
 				//stuff to calculate angle from next position
@@ -45,7 +47,9 @@ public class SimpleRandomMove implements ScriptMod {
 					yNext = nexta.getY();
 					tNext = Math.atan2(yNext-yInit, xNext-xInit);
 					if(xNext==xInit&&yNext==yInit) {
-						next = false;
+						//avoid adjusting points where there are two identical ones in a row
+						///to avoid odd jumping around
+						return;
 					}
 				}
 				while(true) {
