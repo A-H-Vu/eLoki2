@@ -69,10 +69,12 @@ public class CreateClickAndDrag implements ScriptMod {
 			//Logic to collect actions after the iterator to avoid removing from the chain the action `c`
 			if(mDown!=null&&mUp!=null&&cDrag) {
 				System.out.println("moveActions "+moveActions);
+				//use string buffer to build command string
 				StringBuffer buf = new StringBuffer();
 				buf.append("dragDrop");
 				buf.append(" "+mDown.getButton());
 				Action d = mDown.getNextAction();
+				//loop through all the position actions in the mouse down->up
 				while(d!=mUp) {
 					MousePositionAction mpa = (MousePositionAction)d;
 					buf.append(" "+mpa.getX()+" "+mpa.getY()+" "+mpa.getDurationFromPrev());

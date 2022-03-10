@@ -33,6 +33,7 @@ import script.Script;
 import script.ScriptController;
 import script.action.*;
 import script.action.impl.*;
+import script.mod.CreateBatchMoves;
 import script.mod.CreateClickAndDrag;
 import script.mod.SimpleRandomMove;
 
@@ -80,9 +81,14 @@ public class Main {
 			.help("Randomize movement of mouse slightly")
 			.action(Arguments.storeTrue())
 			.dest("randomize");
+		runscript.addArgument("--batchMove")
+			.help("Batches various movement actions into a single one")
+			.action(Arguments.storeTrue())
+			.dest("batchMove");
 		runscript.addArgument("script")
 			.nargs("+")
 			.help("Script to run");
+		
 		
 		//Scraper sub-module, used to scrape websites
 		Subparser scraper = subparsers.addParser("scrape")
@@ -211,7 +217,11 @@ public class Main {
 						if(res.getBoolean("randomize")) {
 							script = new SimpleRandomMove().modify(script);
 						}
+						//BatchMove will consume the movement actions in the click and drag
 						script = new CreateClickAndDrag().modify(script);
+						if(res.getBoolean("batchMove")) {
+							script = new CreateBatchMoves().modify(script);
+						}
 						defaultController.runScript(script, client);
 					} catch (IOException e) {
 						System.err.println("Error reading script "+s);

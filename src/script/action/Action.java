@@ -71,7 +71,7 @@ public interface Action {
 		return getTick().getValue()-getPreviousAction().getTick().getValue();
 	}
 	
-	default long getDruationFromNext() {
+	default long getDurationFromNext() {
 		ActionTick selfTick = getTick();
 		ActionTick nextTick = getNextAction().getTick();
 		if(selfTick.getResponse()==ActionTick.Response.Ignore) {
