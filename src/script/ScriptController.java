@@ -151,6 +151,7 @@ public class ScriptController {
 				}
 			}
 			else {
+				System.out.println("Skipping action "+current.getRaw());
 				current = current.getNextAction();
 				skip = false;
 			}
@@ -174,9 +175,9 @@ public class ScriptController {
 				skip = true;
 			}
 			//Sleep for the specified delay
-			if(delay > 2) {
+			if(delay > 10) {
 				try {
-					Thread.sleep(delay-2);
+					Thread.sleep(delay-10);
 				} catch (InterruptedException e) {
 					//presumably interrupted to stop script
 					break;
