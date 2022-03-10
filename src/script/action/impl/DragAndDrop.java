@@ -38,14 +38,13 @@ public class DragAndDrop extends ActionImpl implements Action {
 		if(client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient)client;
 			Actions action = new Actions(sClient.getWebDriver());
-			action.clickAndHold();
 			action.tick(sClient.getPointerInput().createPointerDown(Integer.parseInt(points[0])));
 			for(int i = 0; i<(points.length/3)-1; i++) {
 				action.tick(sClient.getPointerInput().createPointerMove(Duration.ofMillis(Integer.parseInt(points[i*3+3])),
 						PointerInput.Origin.viewport(), Integer.parseInt(points[i*3+1]),Integer.parseInt(points[i*3+2])));
 				
 			}
-			action.release();
+			action.tick(sClient.getPointerInput().createPointerUp(Integer.parseInt(points[0])));
 			action.perform();
 		}
 		
