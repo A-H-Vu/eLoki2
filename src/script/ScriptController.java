@@ -174,10 +174,13 @@ public class ScriptController {
 			if(delay<-10&&type == ActionTick.Response.Skippable) {
 				skip = true;
 			}
+			//An estimate of the time to execute the loop, including sending the action to the browser etc
+			//in miliseconds
+			int loopDelay = 10;
 			//Sleep for the specified delay
-			if(delay > 10) {
+			if(delay > loopDelay) {
 				try {
-					Thread.sleep(delay-10);
+					Thread.sleep(delay-loopDelay);
 				} catch (InterruptedException e) {
 					//presumably interrupted to stop script
 					break;

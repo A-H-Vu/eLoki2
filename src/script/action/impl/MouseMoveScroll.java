@@ -89,7 +89,7 @@ public class MouseMoveScroll extends ActionImpl implements MousePositionAction,S
 	}
 	@Override
 	protected ActionTick.Response actionTickResponse() {
-		return ActionTick.Response.Skippable;
+		return ActionTick.Response.UseTick;
 	}
 	@Override
 	public Action clone() {
