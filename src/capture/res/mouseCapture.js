@@ -352,6 +352,8 @@ function init(ifHeight = 1200, ifWidth = 1920) {
             }
         })
         ifrmDoc.addEventListener('mouseup', event => {
+            if(event.button==2) return;
+            //temp fix, need a way to detect if context menu is enabld thus hiding mouse up event
             if (capturing) {
                 event = event || window.event;
                 var target = event.currentTarget || event.srcElement

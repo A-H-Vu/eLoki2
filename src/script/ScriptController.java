@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openqa.selenium.UnhandledAlertException;
+
 import clients.Client;
+import clients.SeleniumClient;
 import script.action.ActionImpl;
 import script.action.Action;
 import script.action.ActionTick;
@@ -139,7 +142,13 @@ public class ScriptController {
 				try {
 					current = current.execute(client);
 					errors = 0;
-				}catch(Exception e) {
+				}
+				catch(UnhandledAlertException e1) {
+					if(client instanceof SeleniumClient) {
+						((SeleniumClient)client).getWebDriver().switchTo().alert().accept();
+					}
+				}
+				catch(Exception e) {
 					//Error handing, stop execution if too many error ocurr with the same action
 					System.err.println("Error executing "+current.getRaw()+",skipping");
 					current = current.getNextAction();
