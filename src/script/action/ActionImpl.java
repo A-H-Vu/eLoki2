@@ -17,12 +17,15 @@ public abstract class ActionImpl implements Action {
 	protected Action next;
 	protected Action previous;
 	
+	protected String actionName;
+	
 	/**
 	 * Create a new instance of the action
 	 * @param raw 
 	 */
 	protected ActionImpl(String raw) {
 		this.raw = raw;
+		this.actionName = raw.split(" ", 2)[0];
 		//default for if tick val is not set.
 		tick = new ActionTick(0, ActionTick.Response.Ignore);
 	}

@@ -346,7 +346,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                 if(typeof(cssp)==='undefined')
                     cssp = "";
                 ticks.push({
-                    content: `mouseDown ${event.button} ${cssp}`,
+                    content: `mouseDown ${event.button} ${event.x} ${event.y} ${cssp}`,
                     t: new Date()
                 });
             }

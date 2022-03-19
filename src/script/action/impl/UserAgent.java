@@ -35,6 +35,8 @@ public class UserAgent extends ActionImpl {
 					ChromiumDriver cDriver = (ChromiumDriver)sClient.getWebDriver();
 					cDriver.executeCdpCommand("Network.setUserAgentOverride", Map.of("userAgent",UA));
 				}
+				//To get firefox working will need to pull in devtools package and use the proper interface
+				//instead of directly executing the cdp command which is only possible with Chrome based browsers
 			}
 		}
 		return super.next;

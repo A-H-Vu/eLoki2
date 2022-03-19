@@ -5,6 +5,7 @@ import org.openqa.selenium.interactions.Actions;
 import clients.Client;
 import clients.SeleniumClient;
 import script.action.Action;
+import script.action.ActionArgParser;
 import script.action.ActionCompatibility;
 import script.action.ActionImpl;
 import script.action.ActionTick;
@@ -14,11 +15,10 @@ public class MouseUp extends ActionImpl implements Action {
 	private String css;
 	public MouseUp(String raw) {
 		super(raw);
-		String[] args = raw.split(" ");
-		button = Integer.parseInt(args[1]);
-		if(args.length>2) {
-			css = args[2];
-		}
+		ActionArgParser ap = new ActionArgParser(raw);
+		//left mouse up default
+		this.button = ap.getArgAsIntO(0).orElse(0);
+		this.css = ap.getArgO(1).orElse("");
 	}
 
 	public MouseUp(Action original) {
@@ -61,7 +61,7 @@ public class MouseUp extends ActionImpl implements Action {
 	}
 	
 	
-	//used by MouseDown to determine if its a click or a click and hold
+	//can be used by MouseDown to determine if its a click or a click and hold
 	//can only emulate a click with javascript
 	//currently unused
 	String getCSS() {

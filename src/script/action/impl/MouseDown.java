@@ -1,25 +1,33 @@
 package script.action.impl;
 
+import java.time.Duration;
+
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.PointerInput;
 
 import clients.Client;
 import clients.SeleniumClient;
 import script.action.Action;
+import script.action.ActionArgParser;
 import script.action.ActionCompatibility;
 import script.action.ActionImpl;
 import script.action.ActionTick;
 
 public class MouseDown extends ActionImpl implements Action {
 	private int button;
+	private int x;
+	private int y;
+	
 	private String css;
 	
 	public MouseDown(String raw) {
 		super(raw);
-		String[] args = raw.split(" ");
-		button = Integer.parseInt(args[1]);
-		if(args.length>2) {
-			css = args[2];
-		}
+		ActionArgParser ap = new ActionArgParser(raw);
+		//left mouse down default
+		this.button = ap.getArgAsIntO(0).orElse(0);
+		this.x = ap.getArgAsIntO(1).orElse(-1);
+		this.y = ap.getArgAsIntO(2).orElse(-1);
+		this.css = ap.getArgO(3).orElse("");
 	}
 
 	public MouseDown(ActionImpl original) {
@@ -32,6 +40,10 @@ public class MouseDown extends ActionImpl implements Action {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
 			Actions action = new Actions(sClient.getWebDriver());
+			if(x>=0&&y>=0) {
+				action.tick(sClient.getPointerInput().createPointerMove(Duration.ofMillis(0),
+				PointerInput.Origin.viewport(), x, y));
+			}
 			action.clickAndHold();
 			action.perform();
 		}
