@@ -367,13 +367,13 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                     lastTick = ticks.pop()
                     if(lastTick.content.startsWith("mouseDown")){
                         args = lastTick.content.substring("mouseDown ".length)
-                        nContent = `${event.button} ${cssp}`
-                        console.log(nContent, args)
-                        if(args==nContent&&(new Date().getTime()-lastTick.t.getTime())<1000){
+                        
+                        //just check the button, 0 is first char = button num
+                        if(args[0]==event.button&&(new Date().getTime()-lastTick.t.getTime())<1000){
                             console.log("rep")
                             if(event.button==0){
                                 ticks.push({
-                                    content: `click ${cssp}`,
+                                    content: `click ${args}`,
                                     t: lastTick.t
                                 });
                             }
