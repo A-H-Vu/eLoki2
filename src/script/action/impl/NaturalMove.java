@@ -33,6 +33,7 @@ public class NaturalMove extends ActionImpl implements Action {
 	//final position
 	private int fx = -1;
 	private int fy = -1;
+	private MouseMotionFactory factory;
 	public NaturalMove(String raw) {
 		super(raw);
 		ActionArgParser ap = new ActionArgParser(raw);
@@ -47,6 +48,7 @@ public class NaturalMove extends ActionImpl implements Action {
 		else {
 			throw new IllegalArgumentException("Incorrect number of parameters for NaturalMove");
 		}
+		this.factory = new MouseMotionFactory();
 	}
 
 	public NaturalMove(ActionImpl original) {
@@ -58,7 +60,6 @@ public class NaturalMove extends ActionImpl implements Action {
 	public Action execute(Client client) {
 		if(client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient)client;
-			MouseMotionFactory factory = new MouseMotionFactory();
 			SeleniumMouseMotionProvider mmp = new SeleniumMouseMotionProvider(w,h,ix,iy,sClient);
 			factory.setMouseInfo(mmp);
 			factory.setSystemCalls(mmp);
@@ -83,6 +84,10 @@ public class NaturalMove extends ActionImpl implements Action {
 			return ActionCompatibility.Ok;
 		}
 		return ActionCompatibility.Incompatible;
+	}
+	
+	public void setMouseMotionFactory(MouseMotionFactory factory) {
+		this.factory = factory;
 	}
 
 	@Override

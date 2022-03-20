@@ -1,5 +1,7 @@
 package script.mod;
 
+import com.github.joonasvali.naturalmouse.api.MouseMotionFactory;
+
 import script.Script;
 import script.action.Action;
 import script.action.MousePositionAction;
@@ -8,8 +10,13 @@ import script.action.impl.NaturalMove;
 import script.action.impl.ResizeWindow;
 
 public class CreateNaturalMoves implements ScriptMod {
-
+	private MouseMotionFactory factory;
+	
 	public CreateNaturalMoves() {
+		this(new MouseMotionFactory());
+	}
+	public CreateNaturalMoves(MouseMotionFactory factory) {
+		this.factory = factory;
 	}
 
 	@Override
@@ -86,6 +93,9 @@ public class CreateNaturalMoves implements ScriptMod {
 					//destination position
 					buf.append(lastMP.getX()+" "+lastMP.getY());
 					NaturalMove nm = new NaturalMove(buf.toString());
+					//might be some issues in the future with reusing the factory, maybe
+					//probably not unless the nature gets changed somehow
+					nm.setMouseMotionFactory(factory);
 					nm.setTickVal(lastMP.getTick().getValue());
 					firstMP.insertPreviousAction(nm);
 					if(!script.removeRange(firstMP, lastMP)) {

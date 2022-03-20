@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import org.openqa.selenium.Proxy;
 
+import com.github.joonasvali.naturalmouse.util.FactoryTemplates;
+
 import capture.MouseCapture;
 
 import java.io.Closeable;
@@ -88,7 +90,6 @@ public class Main {
 			.dest("batchMove");
 		runscript.addArgument("--naturalMove")
 			.help("Simulates natural mouse movement")
-			.action(Arguments.storeTrue())
 			.dest("naturalMove");
 		runscript.addArgument("script")
 			.nargs("+")
@@ -228,8 +229,19 @@ public class Main {
 						if(res.getBoolean("batchMove")) {
 							script = new CreateBatchMoves().modify(script);
 						}
-						else if(res.getBoolean("naturalMove")) {
-							script = new CreateNaturalMoves().modify(script);
+						else if(res.getString("naturalMove")!=null) {
+							if(res.getString("naturalMove").equalsIgnoreCase("granny")) {
+								script = new CreateNaturalMoves(FactoryTemplates.createGrannyMotionFactory()).modify(script);
+							}
+							else if(res.getString("naturalMove").equalsIgnoreCase("gamer")) {
+								script = new CreateNaturalMoves(FactoryTemplates.createFastGamerMotionFactory()).modify(script);
+							}
+							else if(res.getString("naturalMove").equalsIgnoreCase("average")) {
+								script = new CreateNaturalMoves(FactoryTemplates.createAverageComputerUserMotionFactory()).modify(script);
+							}
+							else {
+								script = new CreateNaturalMoves().modify(script);
+							}
 						}
 						defaultController.runScript(script, client);
 					} catch (IOException e) {
