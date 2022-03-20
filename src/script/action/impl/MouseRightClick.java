@@ -1,5 +1,7 @@
 package script.action.impl;
 
+import java.time.Duration;
+
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
 
@@ -8,6 +10,7 @@ import clients.SeleniumClient;
 import script.action.ActionImpl;
 import script.action.ActionCompatibility;
 import script.action.Action;
+import script.action.ActionArgParser;
 import script.action.ActionTick;
 
 /**
@@ -16,9 +19,14 @@ import script.action.ActionTick;
  *
  */
 public class MouseRightClick extends ActionImpl {
-
+	private int x;
+	private int y;
+	
 	public MouseRightClick(String raw) {
 		super(raw);
+		ActionArgParser ap = new ActionArgParser(raw);
+		x = ap.getArgAsIntO(0).orElse(-1);
+		y = ap.getArgAsIntO(1).orElse(-1);
 	}
 	public MouseRightClick(Action original) {
 		this(original.getRaw());
@@ -29,6 +37,10 @@ public class MouseRightClick extends ActionImpl {
 		if (client instanceof SeleniumClient) {
 			SeleniumClient sClient = (SeleniumClient) client;
 			Actions action = new Actions(sClient.getWebDriver());
+			if(x>=0&&y>=0) {
+				action.tick(sClient.getPointerInput().createPointerMove(Duration.ofMillis(0),
+				PointerInput.Origin.viewport(), x, y));
+			}
 			action.tick(sClient.getPointerInput().createPointerDown(PointerInput.MouseButton.RIGHT.asArg()));
 			action.tick(sClient.getPointerInput().createPointerUp(PointerInput.MouseButton.RIGHT.asArg()));
 			action.perform();

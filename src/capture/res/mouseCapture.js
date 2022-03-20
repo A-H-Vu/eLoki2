@@ -420,7 +420,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
         ifrmDoc.addEventListener('contextmenu', event => {
             if (capturing) {
                 ticks.push({
-                    content: `right_click`,
+                    content: `right_click ${event.x} ${event.y}`,
                     t: new Date()
                 });
                 testURL();
