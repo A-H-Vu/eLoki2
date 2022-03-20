@@ -144,6 +144,7 @@ public class Main {
 		defaultController.addAction("mouseDown", MouseDown.class);
 		defaultController.addAction("mouseUp", MouseUp.class);
 		defaultController.addAction("dragDrop", DragAndDrop.class);
+		defaultController.addAction("naturalMove", NaturalMove.class);
 		
 		
 		try {
