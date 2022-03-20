@@ -373,7 +373,7 @@ function init(ifHeight = 1200, ifWidth = 1920) {
                             console.log("rep")
                             if(event.button==0){
                                 ticks.push({
-                                    content: `click ${args}`,
+                                    content: `click ${args.substring(2)}`,
                                     t: lastTick.t
                                 });
                             }

@@ -21,6 +21,7 @@ import script.action.ActionArgParser;
 import script.action.ActionCompatibility;
 import script.action.ActionImpl;
 import script.action.ActionTick;
+import script.action.ActionTick.Response;
 
 public class NaturalMove extends ActionImpl implements Action {
 	//screen size
@@ -72,6 +73,11 @@ public class NaturalMove extends ActionImpl implements Action {
 	}
 
 	@Override
+	protected Response actionTickResponse() {
+		return Response.ResetEpochToEnd;
+	}
+
+	@Override
 	public ActionCompatibility checkComptability(Client client) {
 		if (client instanceof SeleniumClient) {
 			return ActionCompatibility.Ok;
@@ -116,7 +122,7 @@ public class NaturalMove extends ActionImpl implements Action {
 		public Dimension getScreenSize() {
 			return new DimensionUIResource(w, h);
 		}
-
+		
 		@Override
 		public void setMousePosition(int x, int y) {
 			//currently just update position with the desired position

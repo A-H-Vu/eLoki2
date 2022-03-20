@@ -54,6 +54,12 @@ public class ResizeWindow extends ActionImpl {
 		}
 		return ActionCompatibility.Incompatible;
 	}
+	public int getWidth() {
+		return width;
+	}
+	public int getHeight() {
+		return height;
+	}
 	@Override
 	public Action clone() {
 		return new ResizeWindow(this);

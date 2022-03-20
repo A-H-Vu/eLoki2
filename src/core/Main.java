@@ -35,6 +35,7 @@ import script.action.*;
 import script.action.impl.*;
 import script.mod.CreateBatchMoves;
 import script.mod.CreateClickAndDrag;
+import script.mod.CreateNaturalMoves;
 import script.mod.SimpleRandomMove;
 
 public class Main {
@@ -85,6 +86,10 @@ public class Main {
 			.help("Batches various movement actions into a single one")
 			.action(Arguments.storeTrue())
 			.dest("batchMove");
+		runscript.addArgument("--naturalMove")
+			.help("Simulates natural mouse movement")
+			.action(Arguments.storeTrue())
+			.dest("naturalMove");
 		runscript.addArgument("script")
 			.nargs("+")
 			.help("Script to run");
@@ -222,6 +227,9 @@ public class Main {
 						script = new CreateClickAndDrag().modify(script);
 						if(res.getBoolean("batchMove")) {
 							script = new CreateBatchMoves().modify(script);
+						}
+						else if(res.getBoolean("naturalMove")) {
+							script = new CreateNaturalMoves().modify(script);
 						}
 						defaultController.runScript(script, client);
 					} catch (IOException e) {
