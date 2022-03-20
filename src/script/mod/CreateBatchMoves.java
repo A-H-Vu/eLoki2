@@ -36,7 +36,7 @@ public class CreateBatchMoves implements ScriptMod {
 					}
 				}
 				//end of chain
-				else if(c.getNextAction()==null){
+				if(c.getNextAction()==null&&lastMP==null){
 					lastMP = (MousePositionAction)c;
 				}
 				
