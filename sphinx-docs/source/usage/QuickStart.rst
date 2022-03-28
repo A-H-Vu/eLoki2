@@ -54,7 +54,7 @@ You should see an output similar to the following
 .. code-block:: console
 
   $ java -jar eLoki2.jar --help
-  usage: eloki2 [-h] [--client {SeleniumChrome,SeleniumFirefox}] [--driver DRIVER] {run,scrape,capture} ...
+  usage: eloki2 [-h] [--client {SeleniumChrome,SeleniumFirefox}] [--driver DRIVER] [--proxy address:port] [--useragent UA] {run,scrape,capture} ...
 
   A tool to generate, record and replay browser sessions
 
@@ -127,5 +127,5 @@ The following command will replay the recording. Again replace CLIENT with the c
 
 
 
-You should see the browser open up and replay the recorded actions. If you want to see where the mouse is at any point edit the tick.txt file to include the line ``attachMouse`` after every line with getPage.
+You should see the browser open up and replay the recorded actions. If you want to know what each line does the :ref:`script <internals/eloki-script>` page has an explanation for each. 
 

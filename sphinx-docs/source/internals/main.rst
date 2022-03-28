@@ -22,8 +22,10 @@ The flow of the main class is fairly simple, parse and check arguments, handle s
 Parse Arguments
 ---------------
 
+The block of code is used to build the argparse4j object, and configure the various arguments. Subparsers are used to parse the arguments for each of the submodules with their own arguments. 
+
 .. code-block:: java 
-    :lineno-start: 44
+    :lineno-start: 53
 
 
     ArgumentParser parser = ArgumentParsers.newFor("eloki2").build()
@@ -45,18 +47,46 @@ Parse Arguments
         .dest("proxy")
         .metavar("address:port")
         .help("Set the [address:port] of the SOCKS5 proxy to use");
+    parser.addArgument("--useragent")
+        .dest("useragent")
+        .help("Sets the user agent for the browser");
     parser.version(version);
     parser.addArgument("--version").action(Arguments.version());
-    
+
+
+The first few lines sets up the global flags and some details for the help message. 
+
+
+.. code-block:: java 
+    :lineno-start: 78
+
     //Run sub-module, used to run scripts
     Subparsers subparsers = parser.addSubparsers().help("sub-command help");
     Subparser runscript = subparsers.addParser("run")
             .help("Run a script")
             .setDefault("runscript", true);
+    runscript.addArgument("--randomMove")
+        .help("Randomize movement of mouse slightly")
+        .action(Arguments.storeTrue())
+        .dest("randomize");
+    runscript.addArgument("--batchMove")
+        .help("Batches various movement actions into a single one")
+        .action(Arguments.storeTrue())
+        .dest("batchMove");
+    runscript.addArgument("--naturalMove")
+        .help("Simulates natural mouse movement")
+        .dest("naturalMove");
     runscript.addArgument("script")
         .nargs("+")
         .help("Script to run");
-    
+
+
+The above block sets up the subparser for running the recorded scripts. The various flags are used to activate different features when running the script. 
+
+
+.. code-block:: java 
+    :lineno-start: 99
+
     //Scraper sub-module, used to scrape websites
     Subparser scraper = subparsers.addParser("scrape")
             .help("Scrape a website using Selenium")
@@ -83,7 +113,14 @@ Parse Arguments
         .dest("prefixes")
         .nargs("+")
         .help("Additional URL prefixes to scrape");
-    
+
+
+This block sets up the subparser for the scraper and the various flags the controls its behavior. See :ref:`the scraper documentation <usage/scraper>` for details on these flags. 
+ 
+
+.. code-block:: java 
+    :lineno-start: 126
+
     //Sub-module for used to capture recordings
     Subparser capture = subparsers.addParser("capture")
             .help("Record a session using Selenium")
@@ -93,18 +130,17 @@ Parse Arguments
         .action(Arguments.storeTrue())
         .help("Use the passive session capture method, if iframe embedding is blocked by the site");
 
-
-The block of code above is used to build the argparse4j object, and configure the various arguments. Subparsers are used to parse the arguments for each of the submodules with their own arguments. Most of the code should be fairly self-explanatory, lines 44-64 sets up the global flags and some details for the help message. Lines 67-73 sets up the subparser for running the recorded scripts. Lines 76-100 does the same for the scraper module. and finally lines 103-109 is for the capture module. 
-
+Finally this block sets up the flags for the capture module. 
 
 
-There is a small portion of the code afterwards where the script controller is setup with lines such as ``defaultController.addAction("waiting", AwaitPageLoad.class);``. As it currently works, the various actions the script recognizes is set manually in this section with the string key being the action in the script file i.e. mouseMoveScroll or waiting and tied to a particular class that handles the action. 
+
+There is a small portion of the code afterwards starting on line 136 the various script actions are inserted into the main parser. As it currently works, the various actions the script recognizes is set manually in this section with the string key being the action in the script file i.e. mouseMoveScroll or waiting and tied to a particular class that handles the action. Any new actions added will also needed to be added here to be recoginzed by the parser. This design also makes it possible to swap various actions with different classes to handle them depending on desired behavior.
 
 Setup Client
 ------------
 
 .. code-block:: java
-    :lineno-start: 131
+    :lineno-start: 163
 
     boolean headless = false;
     if(res.getBoolean("headless")!=null) {
@@ -144,15 +180,19 @@ Setup Client
             proxy.setSocksProxy(res.getString("proxy"));
             sClient.setProxy(proxy);
         }
+        if(res.getString("useragent")!=null) {
+            sClient.setUserAgent(res.getString("useragent"));
+        }
     }
     
-This block of code handles the various arguments related to the client and sets up the client object. Lines 131-134 handles the headless argument, it does not immediately set the client to use headless as the capture module always runs a full browser. Lines 137-157 handles initiating the client itself setting the driver and starting the client. Lines 160-169 handles setting the proxy which is the same for both browsers, the browser clients wrap a method of setting the proxy that works. 
+This block of code handles the various arguments related to the client and sets up the client object. Lines 163-166 handles the headless argument, it does not immediately set the client to use headless as the capture module always runs a full browser. Lines 169-189 handles initiating the client itself setting the driver and starting the client. Lines 192-204 handles setting the proxy which is the same for both browsers, the browser clients wrap a method of setting the proxy that works. 
+
 
 Setup RunScript module
 ----------------------
 
 .. code-block:: java
-    :lineno-start: 171
+    :lineno-start: 206
 
     //Section of the code that handles the run sub-module
     if(res.getBoolean("runscript")!=null) {
@@ -169,10 +209,34 @@ Setup RunScript module
         client.init();
         for(Object s:res.getList("script")) {
             try {
-                Action initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
-                defaultController.runScript(initial, client);
+                ActionImpl initial = defaultController.parseScript(Files.readAllLines(new File(s.toString()).toPath()));
+                Script script = new Script(initial);
+                
+                if(res.getBoolean("randomize")) {
+                    script = new SimpleRandomMove().modify(script);
+                }
+                //BatchMove will consume the movement actions in the click and drag
+                script = new CreateClickAndDrag().modify(script);
+                if(res.getBoolean("batchMove")) {
+                    script = new CreateBatchMoves().modify(script);
+                }
+                else if(res.getString("naturalMove")!=null) {
+                    if(res.getString("naturalMove").equalsIgnoreCase("granny")) {
+                        script = new CreateNaturalMoves(FactoryTemplates.createGrannyMotionFactory()).modify(script);
+                    }
+                    else if(res.getString("naturalMove").equalsIgnoreCase("gamer")) {
+                        script = new CreateNaturalMoves(FactoryTemplates.createFastGamerMotionFactory()).modify(script);
+                    }
+                    else if(res.getString("naturalMove").equalsIgnoreCase("average")) {
+                        script = new CreateNaturalMoves(FactoryTemplates.createAverageComputerUserMotionFactory()).modify(script);
+                    }
+                    else {
+                        script = new CreateNaturalMoves().modify(script);
+                    }
+                }
+                defaultController.runScript(script, client);
             } catch (IOException e) {
-                System.err.println("Error reading script "+res.getString("script"));
+                System.err.println("Error reading script "+s);
                 System.err.println(e.getMessage());
             }
         }
@@ -183,14 +247,13 @@ Setup RunScript module
     }
 
 
-The setup for the runscript module doesn't do much as it is currently, it checks the client in lines 160-167 and then initiates it on line 169 and then iterates through the script argument executing each on in serial. 
-
+Lines 208-218 handles checking the client and initializing it. Line 219 is the main for loop that goes through each of the scripts in the arguments and executes them. Each execution is surounded in a try catch block to recover from errors in any one script. Lines 221 and 222 loads the script from file and does the initial parsing. Lines 224-245 modify the script according to the flags set and line 246 executes the script. Finally lines 253 to 255 closes the client. 
 
 Setup Scraping Module
 ---------------------
 
 .. code-block:: java
-    :lineno-start: 200
+    :lineno-start: 259
 
     else if(res.getBoolean("scrape")!=null) {
         //Various checks related to the client
@@ -227,14 +290,14 @@ Setup Scraping Module
 
     }
 
-The setup for the scraping module is similar to the runscript module checking the client in lines 202-209 adn then extractign and setting the various variables used by the scraping module before starting it.
+The setup for the scraping module is similar to the runscript module checking the client in lines 261-268 and then extracting and setting the various variables used by the scraping module before starting it.
 
 
 Setup Capture Module
 --------------------
 
 .. code-block:: java
-    :lineno-start: 236
+    :lineno-start: 295
 
     else if(res.getBoolean("capture")!=null) {
         //Usual client checks
@@ -246,6 +309,7 @@ Setup Capture Module
             System.err.println("The client must be a Selenium Client, either Selenium-Firefox or Selenium-Chrome");
             System.exit(1);
         }
+        ExtensionLoader.loadExtension(client, ExtensionsList.IgnoreXFrame);
         client.init();
         //Select capture method based on the --passive arg
         if(res.getBoolean("passive")) {
@@ -254,10 +318,10 @@ Setup Capture Module
         else {
             MouseCapture.captureRecording((SeleniumClient)client);
         }
-        
+
     }
 
-The setup for the capture module is again fairly similar checking the client in lines 238-245 before initializing the client and selecting the entrypoint into the capture module based on whether the passive flag is set.
+The setup for the capture module is again fairly similar checking the client in lines 297-304 before initializing the client and selecting the entrypoint into the capture module based on whether the passive flag is set.
 
 
 .. note::

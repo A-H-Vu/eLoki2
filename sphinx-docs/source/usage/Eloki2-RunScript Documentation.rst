@@ -23,7 +23,7 @@ Usage
 
 .. code-block:: console
 
-    $ java -jar eLoki2.jar [--headless] [--driver DRIVERFILE] [--client CLIENT] [--proxy address:port] run <script>
+    $ java -jar eLoki2.jar [--headless] [--driver DRIVERFILE] [--client CLIENT] [--proxy address:port] [--useragent UA] run <script> [script options]
 
 \<script\> is the location of the script file(s) recorded by the capture module.
 
@@ -31,6 +31,7 @@ Usage
 
 Options
 *******
+
 
 --------
 --driver
@@ -68,3 +69,29 @@ The proxy to use, by default no proxy is used. The type of proxy used is a socks
 -----------
 
 Changes the useragent string that the browser uses.
+
+Script Options
+**************
+
+
+------------
+--randomMove
+------------
+
+Randomizes the movement of the mouse in a naive fashion. Every action that moves its mouse will have its co-ordinates changed to a random point in a 11x11 grid centered on the original co-ordinates. i.e. an action that moves the mouse to (25,25) will have its value randomized to any point within the grid from (20,20) to (30,30) inclusive. There is also a check to make sure that the randomized point is within the 30 degree angle formed from the lines 15 degrees out on either side when drawing a line from the previous/next point to the current point. This is to ensure that the mouse trajectory remains relatively similar to the original trajectory.
+
+
+-----------
+--batchMove
+-----------
+
+Combines mousemove actions that are in sequence into a single batchmove action. Actions are grouped if there are no other non-mouse movement actions in between and if the scroll position is the same for all actions. With the Selenium browsers this may help with choppy/laggy mouse movement due to actions being skipped. This option will cause the --naturalMove option to be ignored.
+
+
+----------------------
+--naturalMove \[type\]
+----------------------
+
+Replaces the mousemove actions that are in sequence into a naturalmove action. Actions are grouped if there are no other non-mouse movement actions in between and if the scroll position is the same for all actions. The naturalmove action uses the `NaturalMouseMotion <https://github.com/JoonasVali/NaturalMouseMotion>`_ library to generate the mouse movement between the starting and end point, determined by the first and last point in the sequence of mousemoves grouped. The type option specifies the manner in which the mouse is moved and can be one of ``[granny|gamer|average]``. 
+This option is ignored if ``--batchMove`` is set. 
+

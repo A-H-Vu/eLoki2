@@ -9,7 +9,9 @@
   - for subsections
   ^ for subsubsections
   " for paragraphs
-  
+
+.. _usage/scraper:
+
 #####################
 Eloki2-Scraper Module
 #####################
@@ -25,7 +27,7 @@ Usage
 
 .. code-block:: console 
 
-    java -jar eLoki2.jar [--full-browser] [--driver DRIVERFILE] [--client CLIENT] [--proxy address:port] scrape \<url\> [--timeout TIMEOUT] [--max-depth DEPTH] [--dest FILE]
+    java -jar eLoki2.jar [--full-browser] [--driver DRIVERFILE] [--client CLIENT] [--proxy address:port] [--useragent UA] scrape \<url\> [--timeout TIMEOUT] [--max-depth DEPTH] [--dest FILE]
 
 <url\> The url argument is the address to the page to scrape for example www.yorku.ca
 

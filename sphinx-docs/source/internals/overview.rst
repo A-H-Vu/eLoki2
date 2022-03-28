@@ -15,7 +15,7 @@ ELoki2 Internals
 ################
 
 
-The following topics cover some of the interals of ELoki2 and how it works. They should provide a high level overview of what is done in some of the main classes and some of the design decisions. The code examples are currently from version `0.2.4 <https://github.com/chenc118/eLoki2/commit/8167dd4e8d7551d62f31a57b4680df883b8c9e24>`_
+The following topics cover some of the interals of ELoki2 and how it works. They should provide a high level overview of what is done in some of the main classes and some of the design decisions. The code examples are currently from version `0.5.0 <https://github.com/chenc118/eLoki2/tree/8d84e9d848a7834f1af30804543279448bd7b5c4>`_
 
 
 
@@ -28,3 +28,5 @@ The following topics cover some of the interals of ELoki2 and how it works. They
    runscript
    capture
    script
+   scriptmod
+   extending

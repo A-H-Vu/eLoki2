@@ -29,6 +29,10 @@ Passive method
 
 The flow chart for the passive method is similar to the iframe method with a few differences. The first step is again to inject the script to display the main page after launching the client. However unlike the ifrae method where the quit button is on the recording page it is on the main page as there are no user interfaces other than the main page. Once the user visits the page they want to record and the url changes then the program will automatically enter the recording loop. The recording loop consists of injecting the recording script, waiting for the url to change and then saving what has been recorded on the page, if the url changes to about:blank from the user clicking off the page then it will return to the main page where the recorded script can be downloaded/displayed.
 
+.. warning::
+
+    The passive method has currently very buggy and difficult to get working properly. The issue with sites blocking iframes has been largely resolved by loading extensions that block 
+
 
 Iframe method
 -------------
@@ -37,7 +41,7 @@ Inject Main Page
 ----------------
 
 .. code-block:: java
-    :lineno-start: 69
+    :lineno-start: 70
 
     mainloop: while(true){
         System.out.println("displaying main landing page");
@@ -52,7 +56,7 @@ Check Status
 ------------
 
 .. code-block:: java
-    :lineno-start: 78
+    :lineno-start: 79
 
     String currentURL = webdriver.getCurrentUrl();
     while(true){
@@ -74,14 +78,14 @@ Check Status
         }catch(InterruptedException e1) {}
     }
 
-This block of code is a hot loop executed every 10ms that does a couple of checks. Lines 81-83 checks if the url has changed unexpectedly and returns to the main landing page if it is the case(may not be necessary could potentially just set that as the url instead of needing the user to input to the form). Lines 94-92 checks the a variable on the page which indicates that the user has entered a valid url into the form and breaks the hot loop moving onto the next section.
+This block of code is a hot loop executed every 10ms that does a couple of checks. Lines 82-84 checks if the url has changed unexpectedly and returns to the main landing page if it is the case(may not be necessary could potentially just set that as the url instead of needing the user to input to the form). Lines 85-93 checks the a variable on the page which indicates that the user has entered a valid url into the form and breaks the hot loop moving onto the next section.
 
 
 Inject recording Script
 -----------------------
 
 .. code-block:: java
-    :lineno-start: 99
+    :lineno-start: 100
 
     String recordURL = ((String)jsExec.executeScript("return document.getElementById('iURL').value;"));
     try {
@@ -108,15 +112,15 @@ Inject recording Script
     System.out.println("Waiting for state change");
 
 
-Lines 99-111 gets the url from the form element and then attempst to navigate the browser to the page. If there are any errors then it loops back to the main page setting a status variable which is used to display messages on the main page. 
-Lines 113-116 waits for the page to load before injecting the javascript on line 120.
+Lines 100-112 gets the url from the form element and then attempst to navigate the browser to the page. If there are any errors then it loops back to the main page setting a status variable which is used to display messages on the main page. 
+Lines 114-117 waits for the page to load before injecting the javascript on line 121.
 
 
 Check Status
 ------------
 
 .. code-block:: java
-    :lineno-start: 123
+    :lineno-start: 124
 
     //The hotloop below does the following
     //Check the state variable on the page act depending on the value
@@ -141,5 +145,10 @@ Check Status
     }
     if("quit".equals(state)) break;
 
-This section just checks for state changes and responds accordingly. Line 132 retrieves the current value of the state variable. Lines 133-136 checks if the url has changed unexpectedly and will change the state to reset moving back to the main page. Lines 137-139 breaks the loop if the state changes of which it can be either quit or reset. Reset continues the loop while quit breaks the loop on line 144.
+This section just checks for state changes and responds accordingly. Line 133 retrieves the current value of the state variable. Lines 134-137 checks if the url has changed unexpectedly and will change the state to reset moving back to the main page. Lines 138-140 breaks the loop if the state changes of which it can be either quit or reset. Reset continues the loop while quit breaks the loop on line 145.
 
+
+Injected Javascript
+-------------------
+
+The javascript used to record the session files(mouseCapture.js) largely works by listening on various event handlers on the iframe and recording the actions into an internal list. Lines 1-90 contain mostly utility functions as well as some comments describing the code. The init function is called one the script is fully loaded and initalizes the header and the various listeners. Lines 99-213 overwrites the current page and sets up the recording header. Lines 218-294 sets up variables used while recording and sets up some listeners used to handle recording. The iframeURLChange is used to toggle off capturing when the iframe url changes and wait till the new pages loads before continuing recording. Lines 297-458 contains the bulk of the event handlers that are used to record a session. Lines 462-505 are various utility functions used to print the recorded sessions. 
