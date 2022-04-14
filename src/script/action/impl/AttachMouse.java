@@ -44,10 +44,10 @@ public class AttachMouse extends ActionImpl{
 					+ "  seleniumFollowerImg.setAttribute('id', 'selenium_mouse_follower');\n"
 					+ "  seleniumFollowerImg.setAttribute('style', 'position: absolute; z-index: 99999999999; pointer-events: none; left:0; top:0');\n"
 					+ "  document.body.appendChild(seleniumFollowerImg);\n"
-					+ "  document.onmousemove = function (e) {\n"
+					+ "  document.addEventListener('mousemove',function (e) {\n"
 					+ "    document.getElementById(\"selenium_mouse_follower\").style.left = e.pageX + 'px';\n"
 					+ "    document.getElementById(\"selenium_mouse_follower\").style.top = e.pageY + 'px';\n"
-					+ "  };\n"
+					+ "  });\n"
 					+ "};\n"
 					+ "\n"
 					+ "enableCursor();");

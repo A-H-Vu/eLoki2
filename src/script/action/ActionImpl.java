@@ -37,6 +37,7 @@ public abstract class ActionImpl implements Action {
 
 	/**
 	 * Get the original string representing the action
+	 * This should reflect any modifications to the parameters of the Action after instantiation
 	 * 
 	 * @return
 	 */

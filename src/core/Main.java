@@ -142,6 +142,7 @@ public class Main {
 		defaultController.addAction("delay", Wait.class);
 		defaultController.addAction("scrollWindow", ScrollWindow.class);
 		defaultController.addAction("attachMouse", AttachMouse.class);
+		defaultController.addAction("attachClick", AttachClick.class);
 		defaultController.addAction("resize", ResizeWindow.class);
 		defaultController.addAction("keyStroke", KeyStroke.class);
 		defaultController.addAction("keyDown", KeyDown.class);
@@ -151,6 +152,18 @@ public class Main {
 		defaultController.addAction("mouseUp", MouseUp.class);
 		defaultController.addAction("dragDrop", DragAndDrop.class);
 		defaultController.addAction("naturalMove", NaturalMove.class);
+		defaultController.addAction("refresh", Refresh.class);
+		StringBuffer buf = new StringBuffer();
+		//separators
+		for(int i = 0; i<12; i++) {
+			buf.append('-');
+			defaultController.addAction(buf.toString(), NoOp.class);
+		}
+		buf = new StringBuffer();
+		for(int i = 0; i<12; i++) {
+			buf.append('=');
+			defaultController.addAction(buf.toString(), NoOp.class);
+		}
 		
 		
 		try {
