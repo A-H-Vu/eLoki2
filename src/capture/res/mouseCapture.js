@@ -497,10 +497,15 @@ function clear_ticks() {
 function download_ticks() {
     var downloadButton = document.getElementById("downloadAnchor");
     var fileName = document.getElementById("downloadInput").value;
-    var myFile = new Blob([get_ticks()], {type: 'text/plain' });
+    var myFile = new Blob([get_ticks()], {type: 'application/octet-stream' });
     window.URL = window.URL || window.webkitURL;
     downloadButton.setAttribute("download", fileName);
     downloadButton.setAttribute("href", window.URL.createObjectURL(myFile));
+    
+    if(typeof myFile === 'object') {
+		alert("This website is having an issue with downloading txt file. Please change the file to .txt");
+	}
+    
     downloadButton.click();
 }
 
