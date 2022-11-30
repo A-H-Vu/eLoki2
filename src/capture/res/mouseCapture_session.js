@@ -11,6 +11,9 @@
 // 0 : alphanumeric string 
 
 //Default name
+//counter to know when to skip mouseMoveScroll events
+var counter = 0;
+
 var tickName = "ticks"
 if(arguments.length>0){
     tickName = arguments[0];
@@ -116,12 +119,16 @@ function init() {
         })
         //listeners for all events
         doc.addEventListener('mousemove', event => {
-            if (capturing) {
+			//counter set to skip every tenth event
+            if (capturing && counter < 10) {
+				counter++;
                 ticks.push({
                     content: `mouseMoveScroll ${event.x} ${event.y} ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
                     t: new Date()
                 });
-            }
+            } else {
+				counter = 0;
+			}
         });
         doc.addEventListener('click', event => {
             if (capturing) {
