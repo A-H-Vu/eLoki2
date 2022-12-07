@@ -120,7 +120,7 @@ function init() {
         //listeners for all events
         doc.addEventListener('mousemove', event => {
 			//counter set to skip every tenth event
-            if (capturing && counter < 15) {
+            if (capturing && counter < 5) {
 				counter++;
                 ticks.push({
                     content: `mouseMoveScroll ${event.x} ${event.y} ${Math.trunc(ifrm.contentWindow.pageXOffset)} ${Math.trunc(ifrm.contentWindow.pageYOffset)}`,
